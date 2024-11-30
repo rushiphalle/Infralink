@@ -1,0 +1,45 @@
+*{
+    margin: 0px;
+    padding: 0px;
+    box-sizing: border-box;
+}
+
+#navbar{
+    padding: 20px;
+    display: flex;
+    align-items: center;
+    gap: 20px;
+}
+
+#website-logo{
+    width: calc(30vw - 20px);
+    z-index: 1;
+}
+
+#current-page-title{
+    margin-right: auto;
+}
+
+.navbar-items{
+    width: 25px;
+}
+
+#search-bar{
+    margin-right: -55px;
+    height: 30px;
+    border-radius: 50px;
+    border: 1px solid black;
+}
+
+#sidebar{
+    background-color: black;
+    color: wheat;
+    display: flex;
+    align-items: center;
+    flex-direction: column;
+    width: 30vw;
+    height: 100vh;
+    position: fixed;
+    top: 0px;
+    padding-top: 100px;
+}
