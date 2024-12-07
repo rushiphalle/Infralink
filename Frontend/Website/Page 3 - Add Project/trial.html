@@ -1,0 +1,382 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAFdlaZn0yx4KiWTrtk24ZbmCHr9L7Ww6I&libraries=drawing&callback=initMap"
+    async defer></script>
+    <script>
+        const dataToSendBack={};
+        const dept1 = "MOHOU";
+        const dept2 = "MOHOU";
+        phases = ["phase1", "phase2"];
+        currentPatch = 2;
+        const totalPhases = 2;
+        function sendMessage(endpoint, json){
+
+        }    
+        const mapsData = {
+        map1: {
+            polygons: [
+                [
+                    [37.7749, -122.4194],
+                    [37.8049, -122.4294],
+                    [37.7949, -122.4394]
+                ],
+                [
+                    [37.7849, -122.4094],
+                    [37.7949, -122.4194],
+                    [37.7749, -122.4294]
+                ]
+            ]
+        },
+        map2: {
+            polygons: [
+                [
+                    [34.0522, -118.2437],
+                    [34.0722, -118.2537],
+                    [34.0622, -118.2637]
+                ],
+                [
+                    [34.0422, -118.2337],
+                    [34.0522, -118.2437],
+                    [34.0622, -118.2537]
+                ]
+            ]
+        },
+        map3: {
+            polygons: [
+                [
+                    [34.0622, -118.2637],
+                    [34.0722, -118.2537],
+                    [34.0522, -118.2437]
+                ],
+                [
+                    [34.0522, -118.2437],
+                    [34.0322, -118.2337],
+                    [34.0422, -118.2437]
+                ]
+            ]
+        }
+    }
+    </script>
+</head>
+<body style="background-image: linear-gradient(to left, rgb(1, 1, 97), rgb(0, 14, 29))">
+    <div id="part1" style="max-width: 100vw; height: calc(100vh - 20px);  display: flex; margin-top: 20px;">
+        <section id="text" style=" padding: 50px;">
+            <h2 style="color: white; padding: 15px 40px; background-image: linear-gradient(to right, rgb(134, 134, 192), rgb(0, 119, 255)); border-radius: 25px;  width: calc(100% - 60px); text-align: center; box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);">
+            Let's Build Together...
+            </h2>
+        <div style="display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 20px; background-color: #f9f9f9; border-radius: 20px; margin-top: 20px; width: 100%; max-width: 400px; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); font-family: Arial, sans-serif;">
+
+            <h4 style="font-size: 22px; font-weight: bold; color: rgb(50, 50, 50); margin-bottom: 10px; text-align: center;">
+                You Are Conflicting With Another Project
+            </h4>
+
+            <span style="font-size: 16px; color: rgb(80, 80, 80); text-align: center; margin-bottom: 15px;">
+                You Can Solve This Conflict By Collaborating...
+            </span>
+
+            <label style="font-size: 14px; font-weight: bold; color: rgb(60, 60, 60); margin-bottom: 10px;">
+                Select Date To Schedule Collaboration Meeting
+            </label>
+
+            <div style="display: flex; gap: 10px; margin-bottom: 20px; width: 100%; justify-content: center;">
+                <input id="meetDate" type="date" style="padding: 8px; border: 1px solid #ddd; border-radius: 5px; font-size: 14px; width: 48%;">
+                <input id="meetTime" type="time" style="padding: 8px; border: 1px solid #ddd; border-radius: 5px; font-size: 14px; width: 48%;">
+            </div>
+
+            <button onclick="save1()"style="padding: 10px 20px; background-color: rgb(0, 119, 255); color: white; border: none; border-radius: 5px; font-size: 16px; cursor: pointer;">
+                <a href="#part2" style="text-decoration: none; color: honeydew; font-weight: bolder;">Continue</a>
+            </button>
+        </div>
+        </section>
+        <section id="map1"
+            style="width: 50vw; height: 90%; background-color: white; margin: 50px auto; border-radius: 30px;">
+        </section>
+    </div>
+    <div id="part2" style="max-width: 100vw; height: calc(100vh - 20px);  display: flex; margin-top: 20px;">
+        <div id="schedulingTool" style="width: 90%; background-color: white; border-radius: 12px; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); padding: 20px; margin: 0 auto; overflow: hidden;">
+            <div id="currentSchedule" style="margin-bottom: 20px; height: 150px; background-color: #aaa; display: flex; overflow: auto;">
+            </div>
+            <div id="SchedulerInterface" style="display: flex; flex-wrap: wrap; gap: 20px;">
+                <div id="Scheduler" style="flex: 2; min-width: 300px;">
+                    <h4 style="font-size: 24px; font-weight: bold; color: #333; margin-bottom: 0px;" id="patchName">Patch 1</h4>
+                    <div style="height: 70%; overflow-x: auto;">
+                        <h6 style="font-size: 18px; font-weight: normal; color: #555; margin-bottom: 0px;">Attach GeoJSON File</h6>
+                        <input type="file" style="margin-bottom: 20px; padding: 8px; border: 1px solid #ddd; border-radius: 5px; font-size: 14px; width: 90%;">
+            
+                        <h6 style="font-size: 18px; font-weight: normal; color: #555; margin-bottom: 10px;">Set The Schedule For Respective Tasks</h6>
+                        <div id="tasks" style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px;">
+                            <label style="grid-column: 1/4; font-size: 14px; font-weight: bold; color: #333;">Phase 1</label>
+                            <input id="startDate1" type="date" style="padding: 8px; border: 1px solid #ddd; border-radius: 5px; font-size: 14px; width: 90%;">
+                            <input id="endDate1" type="date" style="padding: 8px; border: 1px solid #ddd; border-radius: 5px; font-size: 14px; width: 90%;">
+                            <label style="grid-column: 1/4; font-size: 14px; font-weight: bold; color: #333;">Phase 2</label>
+                            <input id="startDate2" type="date" style="padding: 8px; border: 1px solid #ddd; border-radius: 5px; font-size: 14px; width: 90%;">
+                            <input id="endDate2" type="date" style="padding: 8px; border: 1px solid #ddd; border-radius: 5px; font-size: 14px; width: 90%;">
+                        </div>
+                    </div>
+                </div>
+        
+                <div id="buttons" style="flex: 1; min-width: 200px; display: flex; flex-direction: column; gap: 10px; justify-content: flex-start; align-items: stretch;">
+                    <div>
+                        <button style="padding: 10px; background-color: #007bff; color: white; border: none; border-radius: 5px; font-size: 14px; cursor: pointer; transition: background-color 0.3s; width: 45%;" onclick="addPatch()">Add Patch</button>
+                        <button style="padding: 10px; background-color: #28a745; color: white; border: none; border-radius: 5px; font-size: 14px; cursor: pointer; transition: background-color 0.3s; width: 45%;" onclick="submitSchedule()"><a href="#part3" style="text-decoration: none; color: white; font-weight: bolder;">Submit</a></button>
+                    </div>
+                    <div id="theirVideo" style="width: 100%; height: 150px; background-color: #f0f0f0; border: 1px solid #ddd; border-radius: 5px; display: flex; align-items: center; justify-content: center; margin-top: 10px; color: #aaa;">Their Video</div>
+                    <div id="yourVideo" style="width: 100%; height: 150px; background-color: #f0f0f0; border: 1px solid #ddd; border-radius: 5px; display: flex; align-items: center; justify-content: center; margin-top: 10px; color: #aaa;">Your Video</div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div id="part3" style="max-width: 100vw; height: calc(100vh - 20px);  display: flex; margin-top: 20px;">
+        <section style="width: 100%; padding: 50px;">
+            <h2 style="color: white; padding: 15px 40px; background-image: linear-gradient(to right, rgb(134, 134, 192), rgb(0, 119, 255)); border-radius: 25px;  width: calc(100% - 60px); text-align: center; box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);">
+                Let's Build Together...
+                </h2>
+            <div id="content" style="
+                background-color: white;  
+                border-radius: 15px; 
+                padding: 20px 15px; 
+                margin: 20px 0px; 
+                box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); 
+                font-family: Arial, sans-serif;">
+
+                <label style="
+                    color: black; 
+                    font-weight: bolder; 
+                    font-size: 20px; 
+                    display: block; 
+                    margin: 20px 15px;">
+                    Tendered Projects Which May Conflict With Your Project
+                </label>
+
+                <div style="padding: 15px 20px; border: 1px solid #ddd; border-radius: 10px; margin: 10px 0px;">
+                    <h4 style="
+                        margin-bottom: 10px; 
+                        color: rgb(50, 50, 50); 
+                        font-size: 18px; 
+                        font-weight: bold;">
+                    </h4>
+
+                    <div id="timeline" style="margin-top: 15px; color: rgb(50, 50, 50);">
+                        <p style="margin-bottom: 10px; font-size: 16px; background-color: rgb(178, 248, 225); border-radius: 10px; padding: 5px;">
+                            Your Plan Is Conflicting With Area ${area} mSq<br>Which Can Be Done Colabratively Within ${days} days <br> So please Select the on which you want to start this collabrative task
+                        </p>
+                        <label for="" style="display: block; margin-bottom: 5px; color: rgb(80, 80, 80);">
+                            Tentative Start Date
+                        </label>
+                        <input id="tentativeDate" type="date" style="
+                            padding: 8px; 
+                            font-size: 14px; 
+                            border: 1px solid #ccc; 
+                            border-radius: 5px; 
+                            width: 100%;">
+                    </div>
+                    <button onclick="setTenderedPatch()"><a href="#part4">Submit</a></button>
+                </div>
+
+                <div id="status" style="
+                    width: 90%; 
+                    display: flex; 
+                    border-radius: 25px; 
+                    margin: 20px auto; 
+                    overflow: hidden; 
+                    font-family: Arial, sans-serif; 
+                    font-size: 14px; 
+                    text-align: center; 
+                    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);">
+
+                    <div style="
+                        width: 33%;  
+                        background-color: green; 
+                        padding: 10px; 
+                        color: white; 
+                        font-weight: bold;">
+                        YOUR AREA
+                    </div>
+
+                    <div style="
+                        width: 33%;  
+                        background-color: red; 
+                        padding: 10px; 
+                        color: white; 
+                        font-weight: bold;">
+                        CONFLICTING AREA
+                    </div>
+
+                    <div style="
+                        width: 33%;  
+                        background-color: blue; 
+                        padding: 10px; 
+                        color: white; 
+                        font-weight: bold;">
+                        THEIR AREA
+                    </div>
+                </div>
+            </div>
+        </section>
+        <section id="map2" style="width: 50vw; height: 90%; background-color: white; margin: 50px auto; border-radius: 30px;">
+        </section>
+    </div>
+    <div id="part4" style="max-width: 100vw; height: calc(100vh - 20px);  display: flex; margin-top: 20px;">
+        <section style="width: 100%; padding: 50px;">
+            <h2
+                style="color: white; padding: 15px 40px; background-image: linear-gradient(to right, rgb(134, 134, 192), rgb(0, 119, 255)); border-radius: 25px;  width: calc(100% - 60px); text-align: center; box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);">
+                Let's Build Together...
+            </h2>
+            <div id="content" style="background-color: white;  border-radius: 15px; padding: 20px 15px; margin: 20px 0px; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); font-family: Arial, sans-serif;">
+    
+                <label style="color: black; font-weight: bolder; font-size: 20px; display: block; margin: 20px 15px;">
+                    Projects may be initiated in a few months (AI Analyzed)
+                </label>
+                <div
+                    style="width: 90%; background-color: white; border: 1px solid #ddd; border-radius: 10px; padding: 15px; margin-bottom: 20px;">
+    
+                    <div style="display: flex; flex-direction: column; gap: 10px; font-size: 16px; color: rgb(60, 60, 60);">
+    
+                        <div style="display: flex; justify-content: space-between; align-items: center;">
+                            <label style="font-weight: bold;">Department:</label>
+                            <span style="font-size: 16px; color: rgb(50, 50, 50);">MOHOU</span>
+                        </div>
+    
+                        <div style="display: flex; justify-content: space-between; align-items: center;">
+                            <label style="font-weight: bold;">Name:</label>
+                            <span style="font-size: 16px; color: rgb(50, 50, 50);">Road Construction Project</span>
+                        </div>
+    
+                        <div style="display: flex; justify-content: space-between; align-items: center;">
+                            <label style="font-weight: bold;">Probability in Upcoming One Year:</label>
+                            <span style="font-size: 16px; font-weight: bold; color: green;">97%</span>
+                        </div>
+    
+                        <label style="color: rgb(120, 120, 120); font-style: italic; text-align: center; margin-top: 10px;">
+                            Not Confirmed! Confirmation Request Sent to Department
+                        </label>
+    
+                        <div style="display: flex; gap: 10px; justify-content: center; margin-top: 15px;">
+                            <button
+                                style="padding: 10px 20px; background-color: red; color: white; border: none; border-radius: 5px; cursor: pointer; font-size: 14px;">
+                                Ignore
+                            </button>
+                            <button
+                                style="padding: 10px 20px; background-color: blue; color: white; border: none; border-radius: 5px; cursor: pointer; font-size: 14px;">
+                                Contact Department
+                            </button>   
+                        </div>
+                    </div>
+    
+                    <button onclick="next2()"
+                        style="padding: 10px 20px; background-color: rgb(0, 119, 255); color: white; border: none; border-radius: 5px; font-size: 16px; cursor: pointer;">
+                        Ignore All
+                    </button>
+                </div>
+            </div>
+        </section>
+        <section id="map3"
+            style="width: 50vw; height: 90%; background-color: white; margin: 50px auto; border-radius: 30px;">
+        </section>
+    </div>
+</body>
+    <script id="saving">
+    page2Data = [];    
+        function save1(){
+            const date = document.getElementById("meetDate").value;
+            const time = document.getElementById("meetTime").value;
+            if(date && time){
+                sendMessage("/scheduleMeet", {date: date, time:time, with: variables.page1ConflictingInfo.project.department_name});
+            }else{
+                alert("Please Select Valid Date And Time");
+            }
+        }
+        function addPatch(){
+           data = {patchNum : currentPatch -1, phasesDates:[]};
+            for(i=0; i<variables.phases.length; i++){
+                startDate = document.getElementById(`startDate${i+1}`).value;
+                endDate = document.getElementById(`endDate${i+1}`).value;
+                if(startDate && endDate){
+                    if(i==0)    data.startDate = startDate;
+                    if(i==(totalPhases-1))    data.endDate = endDate;
+                    data.phasesDates.push({phaseName: phases[i], startDate: startDate, endDate : endDate});
+                }else{
+                    alert("Please Fill All Details");
+                    return ;
+                }
+            }
+            page2Data.push(data);
+            htmlcontenet = `
+                <div style="padding: 15px; border: 1px solid #ddd; border-radius: 10px; background-color: #f9f9f9; max-width: 300px; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); font-family: Arial, sans-serif; margin: 10px; min-width:200px">
+                    <h4 style="font-size: 20px; font-weight: bold; color: #333; margin-bottom: 10px;">Patch ${data.patchNum}</h4>
+                    <label style="font-size: 14px; font-weight: bold; color: #555; margin-right: 10px;">Start Date:</label>
+                    <span style="font-size: 14px; color: #333;">${data.startDate}</span><br>
+                    <label style="font-size: 14px; font-weight: bold; color: #555; margin-right: 10px;">End Date:</label>
+                    <span style="font-size: 14px; color: #333;">${data.endtDate}</span>
+                </div>
+            `;
+            document.getElementById("patchName").innerHTML = `Patch ${currentPatch++}`;
+            document.getElementById("currentSchedule").innerHTML += htmlcontenet;
+        }
+
+        function submitSchedule(){
+            console.log(page2Data);
+            variables.dataToSendBack.page2 = page2Data;
+        }
+
+        function setTenderedPatch(){
+            date = document.getElementById("tentativeDate").value;
+            if(!date) alert("Please Enter Date");
+            else
+                dataToSendBack.page3 = date;
+        }
+    </script>
+    <script id="mapLoadingScript">
+        let map1, map2, map3;
+    
+        function initMap() {
+        // Define center coordinates for all maps
+        const centerMap1 = { lat: 37.7749, lng: -122.4194 }; // San Francisco
+        const centerMap2 = { lat: 34.0522, lng: -118.2437 }; // Los Angeles
+        const centerMap3 = { lat: 34.0522, lng: -118.2437 }; // Los Angeles
+
+        // Initialize maps
+        map1 = new google.maps.Map(document.getElementById("map1"), {
+            zoom: 10,
+            center: centerMap1,
+        });
+
+        map2 = new google.maps.Map(document.getElementById("map2"), {
+            zoom: 10,
+            center: centerMap2,
+        });
+
+        map3 = new google.maps.Map(document.getElementById("map3"), {
+            zoom: 10,
+            center: centerMap3,
+        });
+
+        // Draw polygons for each map
+        drawPolygons(map1, variables.map1);
+        drawPolygons(map2, variables.map2);
+        drawPolygons(map3, variables.map3);
+    }
+
+    function drawPolygons(map, mapData) {
+        mapData.polygons.forEach(polygonCoords => {
+            // Convert [lat, lng] to {lat, lng}
+            const paths = polygonCoords.map(([lat, lng]) => ({ lat, lng }));
+
+            // Draw the polygon
+            const polygon = new google.maps.Polygon({
+                paths,
+                strokeColor: '#FF0000',
+                strokeOpacity: 0.8,
+                strokeWeight: 2,
+                fillColor: '#FF0000',
+                fillOpacity: 0.35,
+            });
+            polygon.setMap(map);
+        });
+    }
+    </script>
+</html>

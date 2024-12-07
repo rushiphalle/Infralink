@@ -1,0 +1,16 @@
+main{
+    display: flex;
+}
+
+#map {
+    width: 100%;
+    height: 500px; /* Set height for the map container */
+}
+
+#interaction1{
+    width: 50vw;
+}
+
+#interaction2{
+    width: 50vw;
+}

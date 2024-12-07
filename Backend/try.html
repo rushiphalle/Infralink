@@ -1,0 +1,521 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <script
+        src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAFdlaZn0yx4KiWTrtk24ZbmCHr9L7Ww6I&libraries=drawing&callback=initMap"
+        async defer></script>
+
+    <style>
+        * {
+            margin: 0px;
+            padding: 0px;
+            box-sizing: border-box;
+        }
+    </style>
+    <!-- <div id="prj1" style="background-color: rgb(221, 248, 250);">
+                    <h4 style="margin: 20px; ">Both Projects are conflicting in area 25000sqm <br>This Conflict Can be done collabrativerly in 1 month <br>But You may have only 15 days as conflict period</h4>
+                    <button style="padding: 5px 15px; width: 100px; margin: 20px calc(50% - 50px);">Continue</button>
+                </div> -->
+</head>
+
+<body style="background-image: linear-gradient(to left, rgb(1, 1, 97), rgb(0, 14, 29))">
+    <main style="display: flex; min-width: 50vw;">
+        <section id="text" style="width: 100%; padding: 50px;">
+            <h2 style="
+                color: white; 
+                padding: 15px 40px; 
+                background-image: linear-gradient(to right, rgb(134, 134, 192), rgb(0, 119, 255)); 
+                border-radius: 25px;  
+                width: 100%; 
+                text-align: center; 
+                box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);">
+                Let's Build Together...
+            </h2>
+            <div style="
+    display: flex; 
+    flex-direction: column; 
+    align-items: center; 
+    justify-content: center; 
+    padding: 20px; 
+    background-color: #f9f9f9; 
+    border-radius: 20px; 
+    margin-top: 20px; 
+    width: 100%; 
+    max-width: 400px; 
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); 
+    font-family: Arial, sans-serif;">
+
+                <h4 style="
+        font-size: 22px; 
+        font-weight: bold; 
+        color: rgb(50, 50, 50); 
+        margin-bottom: 10px; 
+        text-align: center;">
+                    You Are Conflicting With Another Project
+                </h4>
+
+                <span style="
+        font-size: 16px; 
+        color: rgb(80, 80, 80); 
+        text-align: center; 
+        margin-bottom: 15px;">
+                    You Can Solve This Conflict By Collaborating...
+                </span>
+
+                <label style="
+        font-size: 14px; 
+        font-weight: bold; 
+        color: rgb(60, 60, 60); 
+        margin-bottom: 10px;">
+                    Select Date To Schedule Collaboration Meeting
+                </label>
+
+                <div style="
+        display: flex; 
+        gap: 10px; 
+        margin-bottom: 20px; 
+        width: 100%; 
+        justify-content: center;">
+                    <input type="date" style="
+            padding: 8px; 
+            border: 1px solid #ddd; 
+            border-radius: 5px; 
+            font-size: 14px; 
+            width: 48%;">
+                    <input type="time" style="
+            padding: 8px; 
+            border: 1px solid #ddd; 
+            border-radius: 5px; 
+            font-size: 14px; 
+            width: 48%;">
+                </div>
+
+                <button onclick="next1()" style="
+        padding: 10px 20px; 
+        background-color: rgb(0, 119, 255); 
+        color: white; 
+        border: none; 
+        border-radius: 5px; 
+        font-size: 16px; 
+        cursor: pointer;">
+                    Continue
+                </button>
+            </div>
+
+
+            <div>
+                <div></div>
+                <div></div>
+            </div>
+
+        </section>
+        <section id="map"
+            style="min-width: 50vw; height: calc(100vh - 100px); background-color: white; margin: 50px; border-radius: 30px; display: none;">
+            MAP
+        </section>
+    </main>
+
+    <script>
+
+        
+        function change() {
+            parts = parseInt(document.getElementById("parts").value);
+            const phases = [
+                {
+                    name: "phase 1",
+                    equipments: [
+                        ["bulldozer1", "bulldozer2"],
+                        ["crane1", "crane2"]
+                    ]
+                },
+                {
+                    name: "phase 2",
+                    equipments: [
+                        ["bulldozer4", "bulldozer5"],
+                        ["crane4", "crane5"]
+                    ]
+                },
+            ];
+            dept1 ="mouhuas";
+            dept2= "dsbshbs";
+
+            secondDiv = ``;
+            
+            i=0
+            for(i=0; i<parts; i++){
+
+                phasesDiv = ``;
+                for(phase in phases){
+                    i++;
+                    phasesDiv += `
+                        <div style="margin-bottom: 20px;">
+                                <label style="display: block; margin-bottom: 5px; font-size: 14px;">${phase.name}</label>
+                                <input type="date" style="margin-right: 10px; padding: 5px; border: 1px solid #ccc; border-radius: 4px;">
+                                <input type="date" style="padding: 5px; border: 1px solid #ccc; border-radius: 4px;">
+                                <div style="margin-top: 10px;">
+                                    <label style="margin-right: 15px; font-size: 14px;">
+                                        <input type="radio" name="dept1${i}" value="dept1${i}" style="margin-right: 5px;"> ${dept1}
+                                    </label>
+                                    <label style="font-size: 14px;">
+                                        <input type="radio" name="dept2${i}" value="dept2${i}" style="margin-right: 5px;"> ${dept2}
+                                    </label>
+                                </div>
+                            </div>
+                    `;
+                }
+                secondDiv += `
+                    <div style="flex: 1 1 250px; background-color: #f9f9f9; padding: 20px; border-radius: 15px; box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);">
+                        <h3 style="margin-bottom: 15px; font-size: 20px; color: #444;">Patch ${i+1}</h3>
+                        ${phasesDiv}
+                    </div>
+                `;
+            }
+            lastDiv = ``;
+            i =0;
+            for(phase in phases){
+                equipmentDiv = ``;
+                for(equipments in phase.equipments){
+                    i++;
+                    equipmentDiv += `
+                        <label>
+                            <input type="radio" name="equipment1${i}" value="equipment1${i}">
+                            ${equipments[0]}
+                        </label>
+                        <label>
+                            <input type="radio" name="equipment2${i}" value="equipment2${i}">
+                            ${equipments[1]}
+                        </label>
+                        <br>
+                    `;
+                }
+                lastDiv += `
+                    <div>
+                        <h4>${phase.name}</h4>   
+                        ${equipmentDiv}
+                    </div>
+                `;
+            }
+            document.getElementById("text").innerHTML = `${secondDiv} ${lastDiv}`;
+        }
+        function next1() {
+            document.getElementById("map").style.display = 'none';
+            document.getElementById("text").innerHTML = `            <div style="
+    padding: 20px; 
+    background-color: #f9f9f9; 
+    border-radius: 15px; 
+    margin-top: 20px; 
+    width: 100%; 
+    max-width: 500px; 
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); 
+    font-family: Arial, sans-serif;">
+
+                <h3 style="
+        font-size: 20px; 
+        font-weight: bold; 
+        color: #333; 
+        margin-bottom: 15px; 
+        text-align: center;">
+                    The Collaborative Department is Willing to Complete This Conflicting Area Between 12 March 2024 to
+                    12 March 2025
+                </h3>
+
+                <div style="
+        display: flex; 
+        flex-direction: column; 
+        gap: 10px; 
+        margin-top: 20px;">
+
+                    <label style="
+            font-size: 16px; 
+            font-weight: bold; 
+            color: #555; 
+            margin-bottom: 5px;">
+                        First Select How Many Parts You Want to Split the Task
+                    </label>
+
+                    <select name="" id="parts" onchange="change()" style="
+            padding: 10px; 
+            font-size: 14px; 
+            border: 1px solid #ddd; 
+            border-radius: 5px; 
+            background-color: #fff; 
+            width: 100%; 
+            box-shadow: inset 0 2px 5px rgba(0, 0, 0, 0.05); 
+            cursor: pointer;">
+                        <option value="1">1</option>
+                        <option value="2">2</option>
+                        <option value="3">3</option>
+                        <option value="4">4</option>
+                        <option value="5">5</option>
+                    </select>
+                </div>
+            </div>
+`;
+        }
+        function next2() {
+            area = 1000;
+            days = 365;
+            document.getElementById("text").innerHTML = `
+            <h2 style="
+                color: white; 
+                padding: 15px 40px; 
+                background-image: linear-gradient(to right, rgb(134, 134, 192), rgb(0, 119, 255)); 
+                border-radius: 25px;  
+                width: 100%; 
+                text-align: center; 
+                box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);">
+                Let's Build Together...
+            </h2>
+            <div id="content" style="
+                background-color: white;  
+                border-radius: 15px; 
+                padding: 20px 15px; 
+                margin: 20px 0px; 
+                box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); 
+                font-family: Arial, sans-serif;">
+
+                <label style="
+                    color: black; 
+                    font-weight: bolder; 
+                    font-size: 20px; 
+                    display: block; 
+                    margin: 20px 15px;">
+                    Tendered Projects Which May Conflict With Your Project
+                </label>
+
+                <div style="padding: 15px 20px; border: 1px solid #ddd; border-radius: 10px; margin: 10px 0px;">
+                    <h4 style="
+                        margin-bottom: 10px; 
+                        color: rgb(50, 50, 50); 
+                        font-size: 18px; 
+                        font-weight: bold;">
+                    </h4>
+
+                    <div id="timeline" style="margin-top: 15px; color: rgb(50, 50, 50);">
+                        <p style="margin-bottom: 10px; font-size: 16px; background-color: rgb(178, 248, 225); border-radius: 10px; padding: 5px;">
+                            Your Plan Is Conflicting With Area ${area} mSq<br>Which Can Be Done Colabratively Within ${days} days <br> So please Select the on which you want to start this collabrative task
+                        </p>
+                        <label for="" style="display: block; margin-bottom: 5px; color: rgb(80, 80, 80);">
+                            Tentative Start Date
+                        </label>
+                        <input type="date" style="
+                            padding: 8px; 
+                            font-size: 14px; 
+                            border: 1px solid #ccc; 
+                            border-radius: 5px; 
+                            width: 100%;">
+                    </div>
+                    <button onclick="next3()">Submit</button>
+                </div>
+
+                <div id="status" style="
+                    width: 90%; 
+                    display: flex; 
+                    border-radius: 25px; 
+                    margin: 20px auto; 
+                    overflow: hidden; 
+                    font-family: Arial, sans-serif; 
+                    font-size: 14px; 
+                    text-align: center; 
+                    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);">
+
+                    <div style="
+                        width: 33%;  
+                        background-color: green; 
+                        padding: 10px; 
+                        color: white; 
+                        font-weight: bold;">
+                        YOUR AREA
+                    </div>
+
+                    <div style="
+                        width: 33%;  
+                        background-color: red; 
+                        padding: 10px; 
+                        color: white; 
+                        font-weight: bold;">
+                        CONFLICTING AREA
+                    </div>
+
+                    <div style="
+                        width: 33%;  
+                        background-color: blue; 
+                        padding: 10px; 
+                        color: white; 
+                        font-weight: bold;">
+                        THEIR AREA
+                    </div>
+                </div>
+            </div>`
+        
+        }
+        function next3() {
+            document.getElementById("text").innerHTML = `
+            <h2 style="
+                color: white; 
+                padding: 15px 40px; 
+                background-image: linear-gradient(to right, rgb(134, 134, 192), rgb(0, 119, 255)); 
+                border-radius: 25px;  
+                width: 100%; 
+                text-align: center; 
+                box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);">
+                Let's Build Together...
+            </h2>
+            
+<div style="
+    display: flex; 
+    flex-direction: column; 
+    align-items: center; 
+    justify-content: center; 
+    padding: 20px; 
+    background-color: #f9f9f9; 
+    border-radius: 20px; 
+    margin-top: 20px; 
+    height: auto; 
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); 
+    font-family: Arial, sans-serif;">
+
+                <h4 style="
+        margin-bottom: 20px; 
+        font-size: 20px; 
+        font-weight: bold; 
+        color: rgb(50, 50, 50); 
+        text-align: center;">
+                    Projects may be initiated in a few months (AI Analyzed)
+                </h4>
+
+                <div style="
+        width: 100%; 
+        background-color: white; 
+        border: 1px solid #ddd; 
+        border-radius: 10px; 
+        padding: 15px; 
+        margin-bottom: 20px;">
+
+                    <div style="
+            display: flex; 
+            flex-direction: column; 
+            gap: 10px; 
+            font-size: 16px; 
+            color: rgb(60, 60, 60);">
+
+                        <div style="display: flex; justify-content: space-between; align-items: center;">
+                            <label style="font-weight: bold;">Department:</label>
+                            <span style="font-size: 16px; color: rgb(50, 50, 50);">MOHOU</span>
+                        </div>
+
+                        <div style="display: flex; justify-content: space-between; align-items: center;">
+                            <label style="font-weight: bold;">Name:</label>
+                            <span style="font-size: 16px; color: rgb(50, 50, 50);">Road Construction Project</span>
+                        </div>
+
+                        <div style="display: flex; justify-content: space-between; align-items: center;">
+                            <label style="font-weight: bold;">Probability in Upcoming One Year:</label>
+                            <span style="font-size: 16px; font-weight: bold; color: green;">97%</span>
+                        </div>
+
+                        <label
+                            style="color: rgb(120, 120, 120); font-style: italic; text-align: center; margin-top: 10px;">
+                            Not Confirmed! Confirmation Request Sent to Department
+                        </label>
+
+                        <div style="
+                display: flex; 
+                gap: 10px; 
+                justify-content: center; 
+                margin-top: 15px;">
+                            <button style="
+                    padding: 10px 20px; 
+                    background-color: red; 
+                    color: white; 
+                    border: none; 
+                    border-radius: 5px; 
+                    cursor: pointer; 
+                    font-size: 14px;">
+                                Ignore
+                            </button>
+                            <button style="
+                    padding: 10px 20px; 
+                    background-color: blue; 
+                    color: white; 
+                    border: none; 
+                    border-radius: 5px; 
+                    cursor: pointer; 
+                    font-size: 14px;">
+                                Contact Department
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <button onclick="next2()" style="
+        padding: 10px 20px; 
+        background-color: rgb(0, 119, 255); 
+        color: white; 
+        border: none; 
+        border-radius: 5px; 
+        font-size: 16px; 
+        cursor: pointer;">
+                    Ignore All
+                </button>
+            </div>`;
+        }
+    </script>
+    <script>
+        //showing map
+        let map;
+        let directionsService;
+        let geocoder;
+        const URL = "http://127.0.01";
+
+        const rawCoordinates = [
+            [37.7749, -122.4194],
+            [34.0522, -118.2437]
+        ];
+
+
+        const polylineCoordinates = rawCoordinates.map(coord => ({
+            lat: coord[0],
+            lng: coord[1]
+        }));
+
+
+        function initMap() {
+            const mapCenter = polylineCoordinates[0];
+            const map = new google.maps.Map(document.getElementById("map"), {
+                zoom: 6,
+                center: mapCenter,
+            });
+
+            const routePath = new google.maps.Polyline({
+                path: polylineCoordinates,
+                geodesic: true,
+                strokeColor: "blue",
+                strokeOpacity: 1.0,
+                strokeWeight: 4,
+            });
+
+            // Add the polyline to the map
+            routePath.setMap(map);
+        }
+
+        // Load the map
+        window.onload = initMap;
+    </script>
+</body>
+
+</html>
+
+
+
+
+
+<div>
+    <Label>You Are Conflicting With</Label><span>DepartmentNAme</span><br>
+    <Label>For Project: </Label><span>Electricity</span>
+    <Label>Project Duration</Label><span>From-To</span>
+</div>

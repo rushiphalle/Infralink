@@ -4,26 +4,142 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Dashboard</title>
+    <link rel="stylesheet" href="nav.css">
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
     <nav id="navbar">
-        <img src="" alt="INFRALINK" id="website-logo">
-        <h3 id="current-page-title">Dashboard</h3>
-        <img src="./images/alert.png" alt="Alerts" class="navbar-items">
-        <input type="search" id="search-bar">
-        <img src="./images/search.png" alt="search" class="navbar-items">
-        <img src="./images/profile.png" alt="profile" class="navbar-items">
-        <img src="./images/menu.png" alt="menu" class="navbar-items">
+        <img src="./images/logo.jpeg" alt="INFRALINK" id="website-logo">
+            <h3 id="current-page-title">Dashboard</h3>
+            <img src="./images/alert.png" alt="Alerts" class="navbar-items">
+            <input type="search" id="search-bar">
+            <img src="./images/search.png" alt="search" class="navbar-items">
+            <img src="./images/profile.png" alt="profile" class="navbar-items">
+            <img src="./images/menu.png" alt="menu" class="navbar-items">
     </nav>
+    <div style="width: calc(100vw - 270px); position: fixed; z-index: 1; top: 0px; right: 0px; height: 100px; background-color: white;"></div>
     <nav id="sidebar">
         <ul id="sidebar-items">
-            <li>Dashboard</li>
-            <li>Our Projects</li>
-            <li>Conflicting Projects</li>
-            <li>Global Projects</li>
-            <li>Connections</li>
+            <li id="dashboard">Dashboard</li>
+            <li id="our">Our Projects</li>
+            <li id="conflict">Conflicting Projects</li>
+            <li id="global">Global Projects</li>
+            <li id="connection">Connections</li>
         </ul>
     </nav>
+    <main>
+        <section id="project-progress">
+            <h2 style="margin: 10px;">Project Progress</h2>
+            <div id="progress" class="vGraph">
+                <div class="pie">
+                    <div id="progress-pie" ></div>
+                    <label for="pie-chart-for-project-progress">PROGRESS</label>
+                </div>
+                <div class="graphInfo">
+                    <ul>
+                        <li>
+                            <label for="total">Total Projects -</label>
+                            <br>
+                            <value>25</value>
+                        </li>
+                        <li>Project Going in well Timeline</li>
+                        <li>Project Has No Conflicts</li>
+                    </ul>
+                </div>
+            </div>
+            <div id="budget" class="vGraph">
+                <div class="pie">
+                    <div id="budget-pie"></div>
+                    <label for="pie-chart-for-project-progress">BUDGET</label>
+                </div>
+                <div class="graphInfo">NO CONFLICTS OCCURING</div>
+            </div>
+        </section>
+        <section id="urgent">
+            <h2 style="margin: 10px;">Urgents Actions</h2>
+            <ul id="actions" style="margin-top:20px">
+                <li>Conflict Project Need To Chnage Plan</li>
+                <li>Conflict Project Need To Chnage Plan</li>
+                <li>Conflict Project Need To Chnage Plan</li>
+                <li>Conflict Project Need To Chnage Plan</li>
+                <li>Conflict Project Need To Chnage Plan</li>
+                <li>Conflict Project Need To Chnage Plan</li>
+            </ul>
+        </section>
+        <section id="project-breakdown">
+            <br><hr><br><br>
+            <h2 style="margin: 10px;">Comprehensive Project Summary</h2>
+            <div class="project-item">
+                <h4 class="prj-title">Gandhi Mahamarg</h4>
+                <div class="prj-sum">
+                    <div id="progress" class="vGraph">
+                        <div class="pie">
+                            <div id="progress-pie" ></div>
+                            <label for="pie-chart-for-project-progress">PROGRESS</label>
+                        </div>
+                        <div class="graphInfo">
+                            <ul>
+                                <li>
+                                    <label for="total">Total Projects -</label>
+                                    <br>
+                                    <value>25</value>
+                                </li>
+                                <li>Project Going in well Timeline</li>
+                                <li>Project Has No Conflicts</li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div id="budget" class="vGraph">
+                        <div class="pie">
+                            <div id="budget-pie"></div>
+                            <label for="pie-chart-for-project-progress">BUDGET</label>
+                        </div>
+                        <div class="graphInfo">NO CONFLICTS OCCURING</div>
+                    </div>
+                </div>
+            </div>
+        </section>
+        <section id="team-overview"> 
+            <h2 style="margin: 10px; width: 100%;">Team Info</h2>
+            <div class="team-member">
+                <img src="./images/logo.jpeg" alt="profile" class="dp">
+                <Label for="name" class="name-label">Rushikesh Phalle</Label>
+                <Label for="role" class="role-label">Developer</Label>
+                <div class="current-task">
+                    <span>Developing Dashboard</span>
+                    <span>On Perfect Timeline</span>
+                </div>
+                <button class="assign">Assign Task</button>
+                <button class="contact">Contact</button>
+            </div>
+            <div class="team-member">
+                <img src="#" alt="profile" class="dp">
+                <Label for="name" class="name-label">Rushikesh Phalle</Label>
+                <Label for="role" class="role-label">Developer</Label>
+                <div class="current-task">
+                    <span>Developing Dashboard</span>
+                    <span>On Perfect Timeline</span>
+                </div>
+                <button class="assign">Assign Task</button>
+                <button class="contact">Contact</button>
+            </div>
+            <div class="team-member">
+                <img src="#" alt="profile" class="dp">
+                <Label for="name" class="name-label">Rushikesh Phalle</Label>
+                <Label for="role" class="role-label">Developer</Label>
+                <div class="current-task">
+                    <span>Developing Dashboard</span>
+                    <span>On Perfect Timeline</span>
+                </div>
+                <button class="assign">Assign Task</button>
+                <button class="contact">Contact</button>
+            </div>
+            
+        </section>
+        <section id="timeline">
+            <h2 style="margin: 10px;">Your Timeline And Schedule</h2>
+            <div></div>
+        </section>
+    </main>
 </body>
 </html>

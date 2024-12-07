@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Google Map Integration</title>
+    <link rel="stylesheet" href="css1.css">
+</head>
+<body id="body">
+    <div id="main">
+        <section style="width: 50vw;">
+            <div id="question1">
+              <label for="projects">Choose a project:</label>
+              <select id="projects" name="projects" onchange="update()">
+                  <option value="road">Road Construction</option>
+                  <option value="road">Gas Pipeline</option>
+                  <option value="road">Fiber Optics</option>
+                  <option value="railway_station">Railway Station</option>
+              </select>
+            </div>
+            <div id="question2">
+            </div>
+            <button onclick="showOnMap()">Next</button>
+        </section>
+        <section style="width: 50vw; height: 500px;">
+            <div id="map"></div>
+        </section>
+    </div>
+
+    <!-- Google Maps API -->
+    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAFdlaZn0yx4KiWTrtk24ZbmCHr9L7Ww6I&callback=initMap" async defer></script>
+    <script src="./page1.js"></script>
+    <!-- Map Initialization -->
+    <script>
+      let map;
+      let directionsService;
+      let geocoder;
+
+      // Initialize the map and Geocoder
+      function initMap() {
+          map = new google.maps.Map(document.getElementById("map"), {
+              center: { lat: 18.5204, lng: 73.8567 }, // Default center, e.g., Pune
+              zoom: 7,
+          });
+
+          directionsService = new google.maps.DirectionsService();
+          geocoder = new google.maps.Geocoder();
+
+          // Define the start and destination cities (example: Pune and Mumbai)
+          const startCity = "Pune";
+          const endCity = "Mumbai";
+
+          // Get the coordinates of the cities and display routes
+          // getCoordinatesAndDisplayRoute(startCity, endCity);
+      }
+
+      // Get coordinates of a city using Geocoding API
+      function getCoordinatesAndDisplayRoute(startCity, endCity) {
+          geocoder.geocode({ address: startCity }, (results, status) => {
+              if (status === google.maps.GeocoderStatus.OK) {
+                  const startCoords = results[0].geometry.location;
+
+                  geocoder.geocode({ address: endCity }, (results, status) => {
+                      if (status === google.maps.GeocoderStatus.OK) {
+                          const endCoords = results[0].geometry.location;
+
+                          // Once coordinates are fetched, calculate routes
+                          calculateAndDisplayRoutes(startCoords, endCoords);
+                      } else {
+                          console.error("Geocode failed for end city:", status);
+                      }
+                  });
+              } else {
+                  console.error("Geocode failed for start city:", status);
+              }
+          });
+      }
+
+      // Calculate and display routes between two cities
+      function calculateAndDisplayRoutes(startCoords, endCoords) {
+          const request = {
+              origin: startCoords,
+              destination: endCoords,
+              travelMode: google.maps.TravelMode.DRIVING,
+              provideRouteAlternatives: true,
+          };
+
+          directionsService.route(request, (result, status) => {
+              if (status === google.maps.DirectionsStatus.OK) {
+                  drawRoutes(result);
+              } else {
+                  console.error("Error fetching directions:", status);
+              }
+          });
+      }
+
+      // Draw routes on the map
+      function drawRoutes(result) {
+          const colors = ["blue", "green", "red"]; // Colors for different routes
+
+          result.routes.forEach((route, index) => {
+              const polyline = new google.maps.Polyline({
+                  path: route.overview_path,
+                  strokeColor: colors[index % colors.length], // Cycle through colors
+                  strokeOpacity: 0.7,
+                  strokeWeight: 5,
+                  map: map,
+              });
+              URL = "http://127.0.01";
+              // Add click listener for each route
+              google.maps.event.addListener(polyline, "click", () => {
+                  const serializedPolyline = serializePolyline(polyline);
+                  dataToSend = {
+                    department : "MOHUA",
+                    coordinates : serializedPolyline,
+                    task : 5,
+                    end_date : 20250601,
+                    loss : 5
+                  }
+                  fetch(URL + '/checkConflicts', {
+                      method: 'POST',
+                      headers: {
+                        'Content-Type': 'application/json'  // Set the content type to JSON
+                      },
+                      body: dataToSend  // Convert the data object to JSON string
+                    })
+                      .then(response => response.json())
+                      .then(data => {
+                          document.getElementById("body").innerHTML= data;
+                      })
+                  console.log("Serialized Polyline for Database:", serializedPolyline);
+              });
+          });
+      }
+
+      // Serialize polyline to a format suitable for database storage
+      function serializePolyline(polyline) {
+          const path = polyline.getPath();
+          const coordinates = [];
+          path.forEach((point) => {
+              coordinates.push([point.lat(), point.lng()]);
+          });
+
+          // Convert to JSON string
+          return JSON.stringify(coordinates);
+
+          /*
+          Alternative Formats:
+          1. WKT: LINESTRING(lat1 lng1, lat2 lng2, ...)
+             return `LINESTRING(${coordinates.map(coord => coord.join(' ')).join(', ')})`;
+
+          2. Simple String: lat1,lng1|lat2,lng2|...
+             return coordinates.map(coord => coord.join(',')).join('|');
+          */
+      }
+  </script>
+</body>
+</html>
