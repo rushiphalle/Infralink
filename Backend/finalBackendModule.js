@@ -1,5 +1,10 @@
-const mysql = require('mysql');
-const turf = require('@turf/turf');
+import mysql from 'mysql';  // Replacing require with import for mysql
+// import turf from '@turf/turf';  // Replacing require with import for turf
+import * as turf from '@turf/turf';
+
+
+// const turf = require('@turf/turf');
+import fetch from 'node-fetch';
  
 const con = mysql.createConnection({
     host: "localhost",
@@ -9,7 +14,7 @@ const con = mysql.createConnection({
   });
 
 
-async function getConflictManagementPage(self_deptarment_name, project_type, required_parameters){
+export default async function getConflictManagementPage(self_deptarment_name, project_type, required_parameters){
     globalVariable = {};
     selfProject = {};
     page1ConflictingInfo = {isConflicting : false};
@@ -44,7 +49,6 @@ async function getConflictManagementPage(self_deptarment_name, project_type, req
         project_info = await executeQuery(`select * from projects left join projectList on projects.prjId = projectList.id where priority > (select priority from projectList where prjName = '${required_parameters.prjName}') and stage = '3'`);
         // for(project in project_info){
             project_info.forEach((project, index)=>{
-            console.log(isConflicting(project.co_ordinates, required_parameters.co_ordinates));
             if(isConflicting(project.co_ordinates, required_parameters.co_ordinates)){
                 page1ConflictingInfo.isConflicting = true;
                 page1ConflictingInfo.project = {};
@@ -108,13 +112,15 @@ async function getConflictManagementPage(self_deptarment_name, project_type, req
 
     if(page2ConflictingInfo.isConflicting){
         //SELECT DISTINCT(subtaskName), priority FROM task_subtask LEFT JOIN constructionsubtasks ON task_subtask.subtaskId = constructionsubtasks.subtaskId WHERE task_subtask.prjId IN (1, 2) ORDER BY priority ASC;
+        executeQuery(`UPDATE projects SET conflict_id = '${selfProject.id}' where id = '${page2ConflictingInfo.project.id}'`);
         conflictingArea = isConflicting(selfProject.co_ordinates, page2ConflictingInfo.project.co_ordinates);
         globalVariable.myData = selfProject;
         globalVariable.conflictingDataPage2 = page2ConflictingInfo.project;
         globalVariable.conflictingArea2 = conflictingArea;
-        globalVariable.conflictingPortion2 = findArea(conflictArea);
+        globalVariable.conflictingPortion2 = findArea(conflictingArea);
         globalVariable.conflictingPeriod = findConflictingDate(selfProject.start_date, selfProject.end_date, page2ConflictingInfo.project.start_date, page2ConflictingInfo.project.end_date); //
-        globalVariable.map2 = [selfProject.co_ordinates, page2ConflictingInfo.project.co_ordinates, globalVariable.conflictingArea2];            //mark for review
+        console.log("date1= " + selfProject.start_date + "Date2= "+ selfProject.end_date + "Date3 = "+  page2ConflictingInfo.project.start_date + "Date4"+ page2ConflictingInfo.project.end_date + "Conflicting: " +  globalVariable.conflictingPeriod);
+        globalVariable.map2 = [selfProject.co_ordinates, JSON.parse(page2ConflictingInfo.project.co_ordinates), globalVariable.conflictingArea2];            //mark for review
     }
 
     //time to check for predicted conflicts
@@ -128,7 +134,7 @@ async function getConflictManagementPage(self_deptarment_name, project_type, req
             }
         });
     // }
-    prediction = predict(dataToSendForPrediction);
+    prediction = await predict(dataToSendForPrediction);
     predictionData = [];
     if(prediction){
         // for(p in prediction){
@@ -227,7 +233,9 @@ async function getConflictManagementPage(self_deptarment_name, project_type, req
         </div>
         `;
     }
-    div3 = `<div id="part3" style="max-width: 100vw; height: calc(100vh - 20px);  display: flex; margin-top: 20px;">
+    div3 = ``;
+    if(page2ConflictingInfo.isConflicting){
+        div3 = `<div id="part3" style="max-width: 100vw; height: calc(100vh - 20px);  display: flex; margin-top: 20px;">
                 <section style="width: 100%; padding: 50px;">
                     <h2 style="color: white; padding: 15px 40px; background-image: linear-gradient(to right, rgb(134, 134, 192), rgb(0, 119, 255)); border-radius: 25px;  width: calc(100% - 60px); text-align: center; box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);">
                         Let's Build Together...
@@ -317,7 +325,67 @@ async function getConflictManagementPage(self_deptarment_name, project_type, req
                 <section id="map2" style="width: 50vw; height: 90%; background-color: white; margin: 50px auto; border-radius: 30px;">
                 </section>
             </div>`;
-    div4 = ``;
+    }
+    div4 = `
+        <div id="part4" style="max-width: 100vw; height: calc(100vh - 20px);  display: flex; margin-top: 20px;">
+        <section style="width: 100%; padding: 50px;">
+            <h2
+                style="color: white; padding: 15px 40px; background-image: linear-gradient(to right, rgb(134, 134, 192), rgb(0, 119, 255)); border-radius: 25px;  width: calc(100% - 60px); text-align: center; box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);">
+                Let's Build Together...
+            </h2>
+            <div id="content" style="background-color: white;  border-radius: 15px; padding: 20px 15px; margin: 20px 0px; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); font-family: Arial, sans-serif;">
+    
+                <label style="color: black; font-weight: bolder; font-size: 20px; display: block; margin: 20px 15px;">
+                    Projects may be initiated in a few months (AI Analyzed)
+                </label>
+                <div
+                    style="width: 90%; background-color: white; border: 1px solid #ddd; border-radius: 10px; padding: 15px; margin-bottom: 20px;">
+    
+                    <div style="display: flex; flex-direction: column; gap: 10px; font-size: 16px; color: rgb(60, 60, 60);">
+    
+                        <div style="display: flex; justify-content: space-between; align-items: center;">
+                            <label style="font-weight: bold;">Department:</label>
+                            <span style="font-size: 16px; color: rgb(50, 50, 50);">MOHOU</span>
+                        </div>
+    
+                        <div style="display: flex; justify-content: space-between; align-items: center;">
+                            <label style="font-weight: bold;">Name:</label>
+                            <span style="font-size: 16px; color: rgb(50, 50, 50);">Road Construction Project</span>
+                        </div>
+    
+                        <div style="display: flex; justify-content: space-between; align-items: center;">
+                            <label style="font-weight: bold;">Probability in Upcoming One Year:</label>
+                            <span style="font-size: 16px; font-weight: bold; color: green;">97%</span>
+                        </div>
+    
+                        <label style="color: rgb(120, 120, 120); font-style: italic; text-align: center; margin-top: 10px;">
+                            Not Confirmed! Confirmation Request Sent to Department
+                        </label>
+    
+                        <div style="display: flex; gap: 10px; justify-content: center; margin-top: 15px;">
+                            <button
+                                style="padding: 10px 20px; background-color: red; color: white; border: none; border-radius: 5px; cursor: pointer; font-size: 14px;">
+                                Ignore
+                            </button>
+                            <button
+                                style="padding: 10px 20px; background-color: blue; color: white; border: none; border-radius: 5px; cursor: pointer; font-size: 14px;">
+                                Contact Department
+                            </button>   
+                        </div>
+                    </div>
+    
+                    <button onclick="next2()"
+                        style="padding: 10px 20px; background-color: rgb(0, 119, 255); color: white; border: none; border-radius: 5px; font-size: 16px; cursor: pointer;">
+                        Ignore All
+                    </button>
+                </div>
+            </div>
+        </section>
+        <section id="map3"
+            style="width: 50vw; height: 90%; background-color: white; margin: 50px auto; border-radius: 30px;">
+        </section>
+    </div>
+    `;
 
     head = `
         <head>
@@ -331,10 +399,10 @@ async function getConflictManagementPage(self_deptarment_name, project_type, req
     globalScript = `
         <script>
             variables = ${JSON.stringify(globalVariable)};
-            console.log(variables.v);
+            dataToSendBack = {};
         </script>
     `;
-    body = div1 + div2 + div3;
+    body = div1 + div2 + div3 + div4;
     endingScripts = `
         <script id="saving">
             function sendMessage(endpoint, data){
@@ -380,7 +448,7 @@ async function getConflictManagementPage(self_deptarment_name, project_type, req
 
             function submitSchedule(){
                 console.log(page2Data);
-                variables.dataToSendBack.page2 = page2Data;
+                dataToSendBack.page2 = page2Data;
             }
 
             function setTenderedPatch(){
@@ -389,6 +457,7 @@ async function getConflictManagementPage(self_deptarment_name, project_type, req
                 else
                     dataToSendBack.page3 = date;
             }
+            
         </script>
         <script id="mapLoadingScript">
             let map1, map2, map3;
@@ -400,7 +469,6 @@ async function getConflictManagementPage(self_deptarment_name, project_type, req
             const centerMap3 = { lat: 34.0522, lng: -118.2437 }; // Los Angeles
 
             // Initialize maps
-            console.log(document.getElementById("map1"))
             if(document.getElementById("map1")){
                 map1 = new google.maps.Map(document.getElementById("map1"), {
                     zoom: 10,
@@ -413,6 +481,7 @@ async function getConflictManagementPage(self_deptarment_name, project_type, req
                     zoom: 10,
                     center: centerMap2,
                 });
+                console.log(variables.map2);
                 drawPolygons(map2, variables.map2);
             }
 
@@ -452,7 +521,7 @@ async function getConflictManagementPage(self_deptarment_name, project_type, req
 }
 
 
-module.exports = getConflictManagementPage;
+// module.exports = getConflictManagementPage;
 
 async function executeQuery(query) {
     return new Promise((resolve, reject) => {
@@ -466,30 +535,30 @@ async function executeQuery(query) {
     });
   }
 
-
 function isConflicting(cords1, cords2){
     if(typeof(cords1) == "string"){
         cords1 = JSON.parse(cords1);
+        console.log(cords1);
     }
     if(typeof(cords2) == "string"){
         cords2 = JSON.parse(cords2);
+        console.log(cords2);
     }
-    console.log(cords1);
+    if(cords1 === cords2)   return cords1;
     poly1 = turf.polygon([cords1]);
     poly2 = turf.polygon([cords2]);
     var intersection = turf.intersect(turf.featureCollection([poly1, poly2]));
     if(intersection){
-        return intersection.geometry.coordinates;
+        return intersection.geometry.coordinates[0];
     }
     return false;
 }
-
-
 
 function findArea(cords){
     if(typeof(cords)=="string"){
         JSON.parse("string");
     }
+    console.log(cords);
     return turf.area(turf.polygon([cords]));
 
 }
@@ -527,6 +596,19 @@ function findConflictingDate(startDate1, endDate1, startDate2, endDate2) {
     };
 }
 
-function predict(){
-    return null;
+async function predict(){
+    var stream = [];
+    const data = await executeQuery("select * from features");
+    data.forEach((d)=>{
+        if(isConflicting(d.co_ordinates, selfProject.co_ordinates)){
+            stream.push({searchFor: "Electricity", cords: isConflicting(d.co_ordinates, selfProject.co_ordinates), features : data});
+        }
+    });
+    return await fetch('https://example.com/endpoint', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(stream),
+    }); 
 }
