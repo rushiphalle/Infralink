@@ -1,0 +1,113 @@
+/* General body styles */
+body {
+    font-family: Arial, sans-serif;
+    background-color: #f4f4f4;
+    margin: 0;
+    padding: 20px;
+}
+
+/* Container to center the form */
+.container {
+    max-width: 600px;
+    margin: auto;
+    background: white;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+}
+
+/* Heading for the form */
+h2 {
+    text-align: center;
+}
+
+/* Style for form sections */
+.form-section {
+    margin-bottom: 20px;
+}
+
+/* Label styling */
+label {
+    display: block;
+    margin-bottom: 10px;
+    font-weight: bold;
+}
+
+/* Input and select field styling */
+input[type="text"],
+input[type="email"],
+input[type="tel"],
+input[type="number"],
+input[type="url"],
+input[type="file"],
+select {
+    width: 90%;
+    padding: 10px;
+    margin: 5px 0 15px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+}
+
+/* Styling for error input fields */
+input.error {
+    border-color: red;
+    background-color: #fdd;
+}
+
+/* Button styling */
+button {
+    background-color: #28a745;
+    color: white;
+    padding: 10px 15px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+    width: 100%;
+    margin-top: 10px;
+}
+
+/* Button hover effect */
+button:hover {
+    background-color: #218838;
+}
+
+/* Hidden class for hiding sections */
+.hidden {
+    display: none;
+}
+
+/* Styling for disabled buttons */
+button:disabled {
+    background-color: #ccc;
+    cursor: not-allowed;
+}
+
+/* Error message styles */
+.error-message {
+    color: red;
+    font-size: 12px;
+}
+
+/* OTP section specific styling */
+#emailOtpSection,
+#phoneOtpSection {
+    margin-top: 20px;
+}
+
+/* File input styling */
+input[type="file"] {
+    padding: 5px;
+}
+
+/* Responsive layout for mobile devices */
+@media (max-width: 600px) {
+    .container {
+        padding: 15px;
+        width: 100%;
+    }
+
+    button {
+        padding: 12px;
+    }
+}

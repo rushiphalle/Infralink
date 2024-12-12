@@ -1,0 +1,36 @@
+data = {
+    project_progress : {
+        pie : [["270", "90"], ["270", "90"]],
+        content : ["Content1", "Content"]
+    },
+    urgent : {
+        list : ["actionList"]
+    },
+    project_summary: [
+        {
+            pie : [["270deg", "90deg"], ["270deg", "90deg"]],
+            content : ["Content1", "Content"]
+        },
+        {
+            pie : [["270deg", "90deg"], ["270deg", "90deg"]],
+            content : ["Content1", "Content"]
+        } 
+    ],
+    team : [
+        {
+            name : "Rushikesh Phalle",
+            role : "Developer",
+            current_task : "xyz",
+            status: "Right Path"
+        }, 
+        {
+            name : "Rushikesh Phalle",
+            role : "Developer",
+            current_task : "xyz",
+            status: "Right Path"
+        }
+    ],
+    timeline : {
+        "11/12/2024": "Join Meeting"
+    }
+};

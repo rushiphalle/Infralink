@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Register</title>
+    <link rel="stylesheet" href="register1.css">
+    <script src="register1.js" defer></script>
+</head>
+
+<body>
+    <div class="container">
+        <h2>Registration Form</h2>
+
+        <!-- Organization Section -->
+        <div class="form-section" id="SelectType">
+            <label for="organizationName">
+                Name of Organization/Body:
+                <input type="text" id="organizationName" name="organizationName" placeholder="Organization" required>
+            </label>
+
+            <label for="organizationType">
+                Select Organization Type:
+                <select name="organizationType" id="organizationType" required>
+                    <option value="">--Select Type--</option>
+                    <option value="Government">Government</option>
+                    <option value="Pvt-Ltd">Pvt Ltd</option>
+                    <option value="NGO">NGO</option>
+                    <option value="other">Other</option>
+                </select>
+            </label>
+
+            <button type="button" onclick="handleNextButtonClick('SelectType', 'details', this)">Next</button>
+        </div>
+
+        <!-- Contact Person Details Section -->
+        <div class="form-section" id="details" style="display: none;">
+            <label for="contactPersonName">
+                Contact Person Name:
+                <input type="text" id="contactPersonName" name="contactPersonName" placeholder="Enter name" required>
+            </label>
+
+            <label for="designation">
+                Designation:
+                <input type="text" id="designation" name="designation" placeholder="E.g. Manager, Director" required>
+            </label>
+
+            <button type="button" onclick="handleNextButtonClick('details', 'ContactDetails', this)">Next</button>
+        </div>
+
+        <!-- Email and Phone Verification Section -->
+        <div class="form-section" id="ContactDetails" style="display: none;">
+            <label for="email">
+                Email Address:
+                <input type="email" id="email" name="emailaddress" placeholder="Enter email" required>
+            </label>
+            <button type="button" onclick="showOtpSection('emailOtpSection')">Verify Email</button>
+
+            <label for="phone">
+                Phone Number:
+                <input type="tel" id="phone" name="phonenumber" placeholder="Enter phone number" required>
+            </label>
+            <button type="button" onclick="showOtpSection('phoneOtpSection')">Verify Phone Number</button>
+        </div>
+
+        <!-- OTP Verification for Email -->
+        <div class="form-section" id="emailOtpSection" style="display: none;">
+            <label for="emailOtp">
+                Enter OTP for Email:
+                <input type="text" id="emailOtp" name="emailOtp" placeholder="Enter OTP" required>
+            </label>
+            <button type="button" onclick="verifyOtp('emailOtpSection')">Submit OTP</button>
+        </div>
+
+        <!-- OTP Verification for Phone -->
+        <div class="form-section" id="phoneOtpSection" style="display: none;">
+            <label for="phoneOtp">
+                Enter OTP for Phone:
+                <input type="text" id="phoneOtp" name="phoneOtp" placeholder="Enter OTP" required>
+            </label>
+            <button type="button" onclick="verifyOtp('phoneOtpSection')">Submit OTP</button>
+            <button type="button" onclick="handleNextButtonClick('phoneOtpSection', 'AddressDetails', this)">Next</button>
+        </div>
+
+        <!-- Address Section -->
+        <div class="form-section" id="AddressDetails" style="display: none;">
+            <label for="city">
+                City:
+                <input type="text" id="city" name="city" placeholder="Enter city" required>
+            </label>
+
+            <label for="state">
+                State:
+                <input type="text" id="state" name="state" placeholder="Enter state" required>
+            </label>
+
+            <label for="country">
+                Country:
+                <input type="text" id="country" name="country" placeholder="Enter country" required>
+            </label>
+
+            <!-- Next button for the next section -->
+            <button type="button" onclick="handleNextButtonClick('AddressDetails', 'RegistrationDetails', this)">Next</button>
+        </div>
+
+        <!-- Registration Details Section -->
+        <div class="form-section" id="RegistrationDetails" style="display: none;">
+            <label for="companyRegNo">
+                Company Registration No. (Optional):
+                <input type="text" id="companyRegNo" name="companyRegNo" placeholder="Enter registration number">
+            </label>
+
+            <label for="gstNo">
+                GST No. (Optional):
+                <input type="text" id="gstNo" name="gstNo" placeholder="Enter GST number">
+            </label>
+
+            <label for="verificationDoc">
+                Upload Verification Document (Required):
+                <input type="file" id="verificationDoc" name="verificationDoc" required>
+            </label>
+
+            <label for="websiteURL">
+                Website URL (Optional):
+                <input type="url" id="websiteURL" name="websiteURL" placeholder="Enter website URL">
+            </label>
+
+            <button type="button" onclick="submitForm()">Submit</button>
+        </div>
+    </div>
+</body>
+
+</html>

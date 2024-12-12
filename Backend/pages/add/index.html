@@ -1,0 +1,330 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <!-- <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAFdlaZn0yx4KiWTrtk24ZbmCHr9L7Ww6I&callback=initMap" async defer></script> -->
+    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAFdlaZn0yx4KiWTrtk24ZbmCHr9L7Ww6I&libraries=drawing&callback=initMap" async defer></script>
+
+    <style>
+        *{
+            margin: 0px;
+            padding: 0px;
+            box-sizing: border-box;
+        }
+    </style>
+</head>
+<body style="background-image: linear-gradient(to left, rgb(1, 1, 97), rgb(0, 14, 29))">
+    <main style="display: flex; min-width: 50vw;">
+        <section id="text" style="width: 100%; padding: 50px;">
+            <h2 style="color : white; padding:10px 30px; background-image: linear-gradient(to right, rgb(134, 134, 192) , rgb(0, 119, 255)); border-radius: 25px;  width: 100%;">Lets Build Together...</h2>
+            <div style="background-color: white;  border-radius:15px; padding: 5px 0px; margin: 20px 0px;">
+                <div id="question1" style="margin: 30px; border-radius: 100px;">
+                    <Label for="question1" style="color: black; font-weight: bolder; font-size: 20px; display: block;">Please Select Construction</Label>
+                    <select name="types" id="construction_dropdown" style="width: 80%; border-radius: 10px; border: 1px solid black; padding: 5px 20px; margin: 10px 0px;" onchange="dropdownSelect()">
+                        <option value="0">Select Option</option>
+                        <option value="1">Road Construction</option>
+                        <option value="1">Road Repair</option>
+                        <option value="1">Road Widing</option>
+                        <option value="1">Gas Pipelines</option>
+                        <option value="1">Fiber Optics</option>
+                        <option value="1">Electicity</option>
+                        <option value="1">Water Pipelines</option>
+                        <option value="2">Hosipital Building</option>
+                        <option value="2">Railway Station</option>
+                        <option value="2">Govt Office</option>
+                    </select>
+                </div>
+                <div id="question2" style="margin: 30px; border-radius: 100px;">
+                    
+            </div>
+        </section>
+        <section id="map" style="min-width: 50vw; height: calc(100vh - 100px); background-color: white; margin: 50px; border-radius: 30px;">
+            MAP
+        </section>
+    </main>
+
+    <script id="interaction-logic">
+        var selected_construction = null;
+        var startCity= null, endCity = null, date = null, coordinates = null;
+        var work;
+        const url = "http://localhost:3000";
+
+        function next2(){
+            if(!endCity){
+                coordinates = logRectangleCoordinates(coordinates.getBounds());
+            }
+            getNextPage(work, parseInt(date.replace(/-/g, "")), parseInt(date.replace(/-/g, ""))+20000, coordinates);
+        }
+        function getNextPage(construction_name, start_date, end_date, coordinates){
+            console.log(JSON.stringify(coordinates));
+            // Prepare the JSON data
+            const data = {
+                prjName: construction_name,
+                start_date: 20241211,
+                end_date: end_date,
+                co_ordinates : coordinates
+            };
+
+// Send the data to the server using a POST request
+            fetch("http://localhost:3000/get1", {
+                method: "POST", // or 'PUT' for updating data
+                headers: {
+                    "Content-Type": "application/json", // Indicates that we're sending JSON data
+                },
+                body: JSON.stringify(data) // Convert the JavaScript object into a JSON string
+            })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                }
+                return response.json(); // Parse the JSON response from the server
+            })
+            .then(responseData => {
+                // Handle the response data here
+                console.log("Data received from server:", responseData);
+            })
+            .catch(error => {
+                // Handle errors here
+                console.error("There was an error with the fetch operation:", error);
+            });
+        }
+        function dropdownSelect(){
+            selected_construction = document.getElementById("construction_dropdown").value;
+            work = document.getElementById("construction_dropdown").options[document.getElementById("construction_dropdown").selectedIndex].text;
+            if(selected_construction == "1"){
+                document.getElementById("question2").innerHTML = `<Label style="color: black; font-weight: bolder; font-size: 20px; display: block;">Enter The Famous Locations To Visulise Constuction Map</Label>
+                    <br>
+                    <input id="start" type="text" placeholder="Start Location" style="padding: 5px 10px; border-radius: 10px;  width: 40%; border: 1px solid black; margin: 0px 10px; display: inline;">
+                    <input id="end" type="text" placeholder="End Location" style="padding: 5px 10px; border-radius: 10px; border: 1px solid black; width: 40%; margin: 0px 10px; display: inline;"> 
+                    <br>
+                    <br>
+                    <Label style="color: black; font-weight: bolder; font-size: 20px; display: block;">Select Expected Work Date</Label>
+                    <input id = "date"; type="date" style="width: 50%; margin: 10px 0px; padding: 5px 15px; border-radius: 10px; border: 1px solid black;">
+                    <button id="next1" style="width: 50%; padding: 5px 10px; margin: 20px 25%; background-color: rgb(1, 1, 43); border: 1px solid white; color: white; border-radius: 12px;" onclick="drawInMap()">Next</button>
+                </div>`
+            }else{
+                document.getElementById("question2").innerHTML = `<Label style="color: black; font-weight: bolder; font-size: 20px; display: block;">Enter The Famous Locations To Visulise Constuction Map</Label>
+                    <br>
+                    <input id="start" type="text" placeholder="Enter Nearby Location" style="padding: 5px 10px; border-radius: 10px;  width: 40%; border: 1px solid black; margin: 0px 10px; display: inline;"> 
+                    <br>
+                    <br>
+                    <Label style="color: black; font-weight: bolder; font-size: 20px; display: block;">Select Expected Work Date</Label>
+                    <input id = "date"; type="date" style="width: 50%; margin: 10px 0px; padding: 5px 15px; border-radius: 10px; border: 1px solid black;">
+                    <button id="next1" style="width: 50%; padding: 5px 10px; margin: 20px 25%; background-color: rgb(1, 1, 43); border: 1px solid white; color: white; border-radius: 12px;" onclick="drawInMap1()">Next</button>
+                </div>`
+            }
+        }
+        function drawInMap(){
+            startCity = document.getElementById("start").value;
+            endCity = document.getElementById("end").value;
+            date = document.getElementById("date").value;
+            coordinates = null;
+            if(startCity && endCity && date){
+                coordinates = getCoordinatesAndDisplayRoute(startCity, endCity, (cords)=>{
+                    coordinates = cords;
+                    document.getElementById("question2").innerHTML += `<form action="/get1"><input type="hidden" id="jsonData" name="jsonData">
+<button id="btn" style="width: 50%; padding: 5px 10px; margin: 20px 25%; background-color: rgb(1, 1, 43); border: 1px solid white; color: white; border-radius: 12px;">Next</button></form>`;
+                const jsonData = {
+                    prjName: work,
+                    start_date: parseInt(date.replace(/-/g, "")),
+                    end_date: parseInt(date.replace(/-/g, "")) +20000,
+                    co_ordinates : coordinates
+                };
+
+                        // Add event listener to button
+                        document.getElementById('btn').addEventListener('click', () => {
+                            // Convert JSON data to string and set it in the hidden input
+                            document.getElementById('jsonData').value = JSON.stringify(jsonData);
+
+                            // Submit the form programmatically
+                            document.querySelector('form').submit();
+                        });
+                });
+                document.getElementById("question2").innerHTML = `<h3>Great Choice Now Select Which Route You Want To construction SOmething On..</h3>`;
+            }else{
+                alert("Please Select Cities");
+            }
+        }
+        function drawInMap1(){
+            console.log("here");
+            startCity = document.getElementById("start").value;
+            date = document.getElementById("date").value;
+            coordinates = null;
+            if(startCity && date){
+                coordinates = getCoordinatesAndDisplayRoute(startCity, false, (cords)=>{
+                    coordinates = cords;
+                    document.getElementById("question2").innerHTML += `<button onclick = "next2()" style="width: 50%; padding: 5px 10px; margin: 20px 25%; background-color: rgb(1, 1, 43); border: 1px solid white; color: white; border-radius: 12px;">Next</button>`;
+                });
+                document.getElementById("question2").innerHTML = `<h3>Great Choice Now Draw the area recangle</h3>`;
+            }else{
+                alert("Please Select Cities");
+            }
+        }
+    </script>
+
+    <script>
+
+        //showing map
+        let map;
+        let directionsService;
+        let geocoder;
+        const URL = "http://127.0.01";
+        defaultLat = 18.5204;
+        defaultLng = 73.8567;
+        function initMap() {
+            map = new google.maps.Map(document.getElementById("map"), {
+                center: { lat: defaultLat, lng: defaultLng }, 
+                zoom: 7,
+            });
+            directionsService = new google.maps.DirectionsService();
+            geocoder = new google.maps.Geocoder();
+        }
+
+        //finding coordinates of city
+        function getCoordinatesAndDisplayRoute(startCity, endCity, callback) {
+            if(!endCity){
+                geocoder.geocode({ address: startCity }, (results, status) => {
+                    if (status === google.maps.GeocoderStatus.OK) {
+                        const startCoords = results[0].geometry.location;
+                        map.setCenter(startCoords); 
+                        map.setZoom(12); 
+                        enableRectangleDrawing(map, (cords)=>{
+                            callback(cords);
+                        });
+                    }else{
+                        console.error("Geocode failed for start city:", status);
+                    }
+                });
+                return;
+            }
+            geocoder.geocode({ address: startCity }, (results, status) => {
+              if (status === google.maps.GeocoderStatus.OK) {
+                  const startCoords = results[0].geometry.location;
+                  geocoder.geocode({ address: endCity }, (results, status) => {
+                      if (status === google.maps.GeocoderStatus.OK) {
+                          const endCoords = results[0].geometry.location;
+                          // Once coordinates are fetched, calculate routes
+                          calculateAndDisplayRoutes(startCoords, endCoords, (cords)=>{
+                                callback(cords);
+                          });
+                      } else {
+                          console.error("Geocode failed for end city:", status);
+                      }
+                  });
+              } else {
+                  console.error("Geocode failed for start city:", status);
+              }
+          });
+        }
+        // Calculate and display routes between two cities
+        function calculateAndDisplayRoutes(startCoords, endCoords, callback) {
+          const request = {
+              origin: startCoords,
+              destination: endCoords,
+              travelMode: google.maps.TravelMode.DRIVING,
+              provideRouteAlternatives: true,
+          };
+          directionsService.route(request, (result, status) => {
+              if (status === google.maps.DirectionsStatus.OK) {
+                  drawRoutes(result, (cords)=>{
+                    callback(cords);
+                  });
+              } else {
+                  console.error("Error fetching directions:", status);
+              }
+          });
+        }
+
+        // Draw routes on the map
+        function drawRoutes(result, callback) {
+          const colors = ["blue", "green", "red"]; // Colors for different routes
+
+          result.routes.forEach((route, index) => {
+              const polyline = new google.maps.Polyline({
+                  path: route.overview_path,
+                  strokeColor: colors[index % colors.length], // Cycle through colors
+                  strokeOpacity: 0.7,
+                  strokeWeight: 5,
+                  map: map,
+              });
+              google.maps.event.addListener(polyline, "click", () => {
+                  const serializedPolyline = serializePolyline(polyline);
+                //   console.log("Serialized Polyline for Database:", serializedPolyline);
+                  callback(serializedPolyline);
+              });
+          });
+      }
+
+        // Serialize polyline to a format suitable for database storage
+        function serializePolyline(polyline) {
+          const path = polyline.getPath();
+          const coordinates = [];
+          path.forEach((point) => {
+              coordinates.push([point.lat(), point.lng()]);
+          });
+          return coordinates;
+        }
+
+        function enableRectangleDrawing(map, callback) {
+            // Check if the Google Maps Drawing Library is loaded
+            if (!google.maps.drawing) {
+                console.error("Google Maps Drawing Library is not loaded. Make sure to include `libraries=drawing` in your API URL.");
+                return;
+            }
+
+            // Initialize the Drawing Manager
+            const drawingManager = new google.maps.drawing.DrawingManager({
+                drawingMode: google.maps.drawing.OverlayType.RECTANGLE,
+                drawingControl: true,
+                drawingControlOptions: {
+                    position: google.maps.ControlPosition.TOP_CENTER,
+                    drawingModes: ['rectangle']
+                },
+                rectangleOptions: {
+                    editable: true,
+                    draggable: true
+                }
+            });
+
+            // Activate the drawing mode
+            drawingManager.setMap(map);
+
+            // Prevent the map from dragging while drawing
+            map.setOptions({ draggable: false });
+
+            // Listen for the rectangle being drawn
+            google.maps.event.addListener(drawingManager, 'overlaycomplete', function(event) {
+                if (event.type === google.maps.drawing.OverlayType.RECTANGLE) {
+                    // Get the rectangle instance
+                    const rectangle = event.overlay;
+
+                    // Log the coordinates
+                    const bounds = rectangle.getBounds();
+                    // logRectangleCoordinates(bounds);
+
+                    // Listen for rectangle updates (e.g., drag/resize)
+                    // google.maps.event.addListener(rectangle, 'bounds_changed', function() {
+                    //     logRectangleCoordinates(rectangle.getBounds());
+                    // });
+
+                    // Re-enable map dragging after the rectangle is drawn
+                    drawingManager.setDrawingMode(null);
+                    map.setOptions({ draggable: true });
+                    callback(rectangle);
+                }
+            });
+        }
+
+        // Helper function to log rectangle coordinates
+        function logRectangleCoordinates(bounds) {
+            const ne = bounds.getNorthEast(); // Northeast corner
+            const sw = bounds.getSouthWest(); // Southwest corner
+            cords = [[ne.lat(), ne.lng()], [sw.lat(), sw.lng()]];
+            return cords;
+        }
+
+    </script>
+</body>
+</html>

@@ -7,6 +7,11 @@ import mysql from 'mysql';
 import { verify } from 'crypto';
 import getConflictManagementPage from './finalBackendModule.js'; // Add .js extension
 import cors from 'cors';
+import { fileURLToPath } from 'url';
+import * as turf from '@turf/turf'; 
+
+
+// import path from 'path';
 
 
 const transporter = nodemailer.createTransport({
@@ -190,21 +195,115 @@ function sendMail(email, subject, data){
     });
 }
 
-function convertToRectangleCoordinates(corners) {
-    const [[x1, y1], [x2, y2]] = corners;
+function convert(cords){
+    // console.log(cords);
+    const polyline = turf.lineString(cords);
 
-    // Define the four corners of the rectangle
-    const rectangle = [
-        [x1, y1], // First corner
-        [x1, y2], // Second corner (same x as the first, different y)
-        [x2, y2], // Third corner (same y as second, different x)
-        [x2, y1], // Fourth corner (same x as third, different y)
-        [x1, y1]  // Close the rectangle by returning to the first corner
-    ];
+        // Desired width (1 unit)
+        const width = 1;
+        // Create offset lines
+        const leftOffset = turf.lineOffset(polyline, width / 2); // Offset to the left
+        const rightOffset = turf.lineOffset(polyline, -width / 2); // Offset to the right
 
-    return rectangle;
+        // Combine into a polygon by manually closing the coordinates
+        const leftCoords = leftOffset.geometry.coordinates;
+        const rightCoords = rightOffset.geometry.coordinates.reverse(); // Reverse to close the polygon
+        return leftCoords.concat(rightCoords, [leftCoords[0]]);
 }
 
+// app.use(express.static(path.resolve('D:', 'Tech Stack', 'Projects', 'Sih', 'Infralink', 'Backend', 'pages')));
 
 
+// Serve the index.html from the "pages" directory at the root
+app.get("/", (req, res) => {
+    const pagesDir = path.join("D:\\Tech Stack\\Projects\\Sih\\Infralink\\Backend\\pages", 'main');
+    
+    // Log the pages directory path for debugging
+    console.log("Pages Directory:", pagesDir);
+    
+    // Serve static files (CSS, JS, images) from the "pages" directory
+    app.use(express.static(pagesDir));
+    const indexPath = path.resolve(pagesDir, 'index.html');
+    console.log("Sending file:", indexPath);  // Log the path of the file being sent
+    res.sendFile(indexPath);
+});
 
+app.get("/login", async(req, res)=>{
+    
+    const pagesDir = path.join("D:\\Tech Stack\\Projects\\Sih\\Infralink\\Backend\\pages", 'dashboard');
+
+    // Log the pages directory path for debugging
+    console.log("Pages Directory:", pagesDir);
+
+    // Serve static files (CSS, JS, images) from the "pages" directory
+    app.use(express.static(pagesDir));
+    const login = req.query.login;
+    const password = req.query.password;
+    const stat = await executeQuery(`select * from users where email = '${login}' and password = '${password}'`);
+    console.log(stat);
+    if(stat.length >0){
+        res.sendFile(path.resolve(pagesDir, 'index.html'));
+    }else{
+        res.send("Invalid Form");
+    }
+});
+
+app.get("/our", (req, res)=>{
+    const pagesDir = path.join("D:\\Tech Stack\\Projects\\Sih\\Infralink\\Backend\\pages", 'our projects');
+    
+    // Log the pages directory path for debugging
+    console.log("Pages Directory:", pagesDir);
+    
+    // Serve static files (CSS, JS, images) from the "pages" directory
+    app.use(express.static(pagesDir));
+    const indexPath = path.resolve(pagesDir, 'index.html');
+    console.log("Sending file:", indexPath);  // Log the path of the file being sent
+    res.sendFile(indexPath);
+});
+
+
+app.get("/add", (req, res)=>{
+    const pagesDir = path.join("D:\\Tech Stack\\Projects\\Sih\\Infralink\\Backend\\pages", 'add');
+    
+    // Log the pages directory path for debugging
+    console.log("Pages Directory:", pagesDir);
+    
+    // Serve static files (CSS, JS, images) from the "pages" directory
+    app.use(express.static(pagesDir));
+    const indexPath = path.resolve(pagesDir, 'index.html');
+    console.log("Sending file:", indexPath);  // Log the path of the file being sent
+    res.sendFile(indexPath);
+});
+
+
+app.get("/get1", async(req, res)=>{
+    // var data = JSON.parse(req.query.jsonData);
+    // console.log(data.co_ordinates);
+    // res.send(await getConflictManagementPage("MOHOU", 2, {prjName: "Road Construction", co_ordinates: [[45.678,89.345],[45.679,89.346],[45.680,89.347],[45.681,89.348],[45.678,89.345]] , department_name: "MOHOU", start_date: 20250101, end_date: 20280101}));
+    var cookie = "rushikeshgphalle@gmail.com";
+    var department_name = await executeQuery(`select dept from users where cookie ='${cookie}'`);
+    var data = JSON.parse(req.query.jsonData);
+    data.co_ordinates = convert(data.co_ordinates);
+    data.department_name = department_name[0].dept;
+    // console.log(req.query);
+    res.send(await getConflictManagementPage(department_name[0].dept, 2, data));
+});
+ 
+const con = mysql.createConnection({
+    host: "localhost",
+    user: "root",
+    password: "Abcd1234",
+    database: "infralink"
+});
+
+async function executeQuery(query) {
+    return new Promise((resolve, reject) => {
+      con.query(query, (err, results) => {
+        if (err) {
+          reject(err); // Reject if there is an error
+        } else {
+          resolve(results); // Resolve with the query result
+        }
+      });
+    });
+}

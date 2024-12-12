@@ -1,0 +1,382 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard</title>
+    <link rel="stylesheet" href="nav.css">
+    <style>
+        body{
+            background-color: rgb(255, 255, 255);
+        }
+        main{
+            margin-top: 80px;
+            padding: 30px;
+            width: calc(100vw - 300px);
+            display: grid;
+            grid-auto-columns: 70% 30%;
+            grid-gap: 10px;
+            margin-left: 250px;
+        }
+
+        #overall-project-progress{
+            grid-area: 1/1/2/2;
+            display: flex;
+            gap: 20px;
+            flex-direction: column ;
+            border-radius: 25px;
+            background-color: #969696;
+            padding: 20px;
+        }
+
+        #urgent{
+            grid-area: 1/2/2/3;
+            height: 400px;
+            background-color:#969696;
+            border-radius: 10px;
+            padding: 10px;
+        }
+
+        #urgent ul{
+            max-height: 80%;
+            margin: 10px;
+            overflow: auto;
+        }
+
+        #urgent ul li{
+            background-color: green;
+            margin: 10px;
+            padding: 10px;
+            border-radius: 25px;
+        }
+
+        #project-breakdown{
+            grid-area: 2/1/3/3;
+        }
+
+        #team-overview{
+            grid-area: 3/1/4/3;
+        }
+
+        #timeline{
+            grid-area: 4/1/5/3;
+            background-color: yellow;
+        }
+        nav#navbar{
+            background-color: black;
+            color: white;
+            
+        }
+        nav#sidebar{
+            border: 20px;
+            border-right: solid white;
+            
+        }
+        .progress{
+          
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            width: 80%;
+        }
+        
+    </style>
+
+    <style>
+        .vGraph{
+            
+            display: flex;
+            flex-direction:column;
+            align-items: center;
+            justify-content: space-around;
+            padding: 20px;
+        }
+        .pie{
+            width: 70px;
+            height: 70px;
+            border-radius: 50%;
+        }
+        .graphInfo{
+            width: calc(100% - 80px);
+        }
+    </style>
+</head>
+<body  style="background-image: url(./images/download.jpg); filter: blur(50%); background-repeat: no-repeat;">
+    <nav id="navbar">
+        <img src="./images/logo.jpeg" alt="INFRALINK" id="website-logo">
+            <h3 id="current-page-title">Dashboard</h3>
+            <img src="./images/alert.png" alt="Alerts" class="navbar-items" >
+            <input type="search" id="search-bar">
+            <img src="./images/search.png" alt="search" class="navbar-items">
+            <img src="./images/profile.png" alt="profile" class="navbar-items">
+            <img src="./images/menu.png" alt="menu" class="navbar-items">
+    </nav>
+    <div style="width: calc(100vw - 270px); position: fixed; z-index: 1; top: 0px; right: 0px; height: 100px; background-color: white;"></div>
+    <nav id="sidebar">
+        <ul id="sidebar-items">
+            <a style="text-decoration: none; color: white; " href="/dashboard"><li id="dashboard">Dashboard</li></a>
+            <a style="text-decoration: none; color: white;" href="/our"><li id="our">Our Projects</li></a>
+            <a style="text-decoration: none; color: white;" href="/conflicting"><li id="conflict">Conflicting Projects</li></a>
+            <a style="text-decoration: none; color: white;" href="/global"><li id="global">Global Projects</li></a>
+            <a style="text-decoration: none; color: white;" href="/connection"><li id="connection">Connections</li></a>
+        </ul>
+    </nav>
+        <main>
+        <section id="overall-project-progress">
+            <div class="progress">
+            <h2 style="margin: 10px; color: white;">Project Progress</h2>
+        </div>
+            
+           <div style="display: flex; width: 100%; justify-content: space-between;">
+            <div class="vGraph" style="background-color: #ffff;border-radius: 20px; width: 49%;height: 48vh;">
+                <div class="graphInfo" id="overall-progress-info">
+                    here i am
+                </div>
+                <div>
+                    <div class="pie" id="overall-progress-pie"></div>
+                    <label for="overall-progress-pie">PROGRESS</label>
+                </div>
+            </div>
+            <div class="vGraph" style="background-color: #ffff; border-radius: 20px; width: 49%; height: 48vh;">
+                <div class="graphInfo" id="overall-budget-info">NO CONFLICTS OCCURING</div>
+                <div>
+                    <div class="pie" id="overall-budget-pie"></div>
+                    <label for="overall-budget-pie">BUDGET</label>
+                </div>
+            </div>
+           </div>
+        </section>
+        <section id="urgent">
+            <h2 style="margin: 10px;">Urgents Actions</h2>
+            <ul id="actions" style="margin-top:20px">
+                
+                <h5 style="color: rgb(53, 52, 52); margin-top: 100px; text-align: center;">No Actions Need To Be Taken</h5>
+            </ul>
+        </section>
+        <section id="project-breakdown" style="display: flex; flex-wrap: wrap;">
+            <br><hr><br><br>
+            <h2 style="margin: 10px; width: 100%;">Comprehensive Project Summary</h2>
+            <div id="projects" style="display: flex; width: 100%;"></div>
+        </section>
+        <section id="team-overview"> 
+            <h2 style="margin: 10px; width: 100%;">Team Info</h2>
+            <div id="members" style="width: 100%; display: flex;">
+                <div style="width: 33%; display: flex; flex-wrap: wrap;">
+                    <img src="./images/logo.jpeg" alt="profile" style="width: 30px; height: 30px;">
+                    <div>
+                        <Label class="name-label">Rushikesh Phalle</Label>
+                        <br>
+                        <Label class="role-label">Developer</Label>
+                    </div>
+                    <br>
+                    <div class="current-task" style="width: 100%;">
+                        <span>Developing Dashboard</span>
+                        <span>On Perfect Timeline</span>
+                    </div>
+                    <br>
+                    <button class="assign" style="width: 100%;">Assign Task</button><br>
+
+                    <button class="contact" style="width: 100%;">Contact</button>
+                </div>
+            </div>
+            <div style="width: 33%; display: flex; flex-wrap: wrap;">
+                <img src="./images/logo.jpeg" alt="profile" style="width: 30px; height: 30px;">
+                <div>
+                    <Label class="name-label">Rushikesh Phalle</Label>
+                    <br>
+                    <Label class="role-label">Developer</Label>
+                </div>
+                <br>
+                <div class="current-task" style="width: 100%;">
+                    <span>Developing Dashboard</span>
+                    <span>On Perfect Timeline</span>
+                </div>
+                <br>
+                <button class="assign" style="width: 100%;">Assign Task</button><br>
+
+                <button class="contact" style="width: 100%;">Contact</button>
+            </div>
+        </div>
+        <div style="width: 33%; display: flex; flex-wrap: wrap;">
+            <img src="./images/logo.jpeg" alt="profile" style="width: 30px; height: 30px;">
+            <div>
+                <Label class="name-label">Rushikesh Phalle</Label>
+                <br>
+                <Label class="role-label">Developer</Label>
+            </div>
+            <br>
+            <div class="current-task" style="width: 100%;">
+                <span>Developing Dashboard</span>
+                <span>On Perfect Timeline</span>
+            </div>
+            <br>
+            <button class="assign" style="width: 100%;">Assign Task</button><br>
+
+            <button class="contact" style="width: 100%;">Contact</button>
+        </div>
+    </div>
+    <div style="width: 33%; display: flex; flex-wrap: wrap;">
+        <img src="./images/logo.jpeg" alt="profile" style="width: 30px; height: 30px;">
+        <div>
+            <Label class="name-label">Rushikesh Phalle</Label>
+            <br>
+            <Label class="role-label">Developer</Label>
+        </div>
+        <br>
+        <div class="current-task" style="width: 100%;">
+            <span>Developing Dashboard</span>
+            <span>On Perfect Timeline</span>
+        </div>
+        <br>
+        <button class="assign" style="width: 100%;">Assign Task</button><br>
+
+        <button class="contact" style="width: 100%;">Contact</button>
+    </div>
+</div>
+<div style="width: 33%; display: flex; flex-wrap: wrap;">
+    <img src="./images/logo.jpeg" alt="profile" style="width: 30px; height: 30px;">
+    <div>
+        <Label class="name-label">Rushikesh Phalle</Label>
+        <br>
+        <Label class="role-label">Developer</Label>
+    </div>
+    <br>
+    <div class="current-task" style="width: 100%;">
+        <span>Developing Dashboard</span>
+        <span>On Perfect Timeline</span>
+    </div>
+    <br>
+    <button class="assign" style="width: 100%;">Assign Task</button><br>
+
+    <button class="contact" style="width: 100%;">Contact</button>
+</div>
+</div>
+<div style="width: 33%; display: flex; flex-wrap: wrap;">
+    <img src="./images/logo.jpeg" alt="profile" style="width: 30px; height: 30px;">
+    <div>
+        <Label class="name-label">Rushikesh Phalle</Label>
+        <br>
+        <Label class="role-label">Developer</Label>
+    </div>
+    <br>
+    <div class="current-task" style="width: 100%;">
+        <span>Developing Dashboard</span>
+        <span>On Perfect Timeline</span>
+    </div>
+    <br>
+    <button class="assign" style="width: 100%;">Assign Task</button><br>
+
+    <button class="contact" style="width: 100%;">Contact</button>
+</div>
+</div>
+            
+        </section>
+        <section id="timeline">
+            <h2 style="margin: 10px;">Your Timeline And Schedule</h2>
+            <div></div>
+        </section>
+    </main>
+</body>
+<script id="contentLoader">
+    const overall_progress_info = document.getElementById("overall-progress-info");
+    const overall_progress_pie = document.getElementById("overall-progress-pie");
+    const overall_budget_info = document.getElementById("overall-budget-info");
+    const overall_budget_pie = document.getElementById("overall-budget-pie");
+    const action = document.getElementById("actions");
+    const projects = document.getElementById("projects");
+
+    window.onload = async () => {
+        try {
+            const response = await fetch('http://localhost:3000/getdata1');
+            if (!response.ok) {
+                throw new Error('Network response was not ok');
+            }
+            const data = await response.json();
+            console.log(data);
+            //overalll progress
+            overall_progress_pie.style.backgroundImage = `conic-gradient(yellow ${data.project_progress.pie[0][0]}deg, rgb(143, 62, 143) 1deg`;
+            overall_budget_pie.style.backgroundImage = `conic-gradient(yellow ${data.project_progress.pie[1][0]}deg, rgb(143, 62, 143) 1deg`;
+            overall_progress_info.innerHTML = data.project_progress.content[0];
+            overall_budget_info.innerHTML = data.project_progress.content[1];
+
+            //action
+            console.log(data.urgent)
+            data.urgent.forEach((element, index) => {
+                if(index ==0)   actions.innerHTML = ``; 
+                actions.innerHTML += `<li>${element}`; 
+            });
+
+            //projects
+            data.project_summary.forEach((element, index) => {
+                projects.innerHTML += `<div style="background-color: blue; padding: 10px; margin: 10px; width: 50%; display:inline">
+                    <h4>Gandhi Mahamarg</h4>
+                    <div class="vGraph" >
+                        <div class="graphInfo" id="progress_graph_info">
+                                <ul>
+                                    <li>
+                                        <label for="total">Total Projects -</label>
+                                        <br>
+                                        <value>25</value>
+                                    </li>
+                                    <li>Project Going in well Timeline</li>
+                                    <li>Project Has No Conflicts</li>
+                                </ul>
+                        </div>
+                        <div class="pie">
+                                <div id="progress-pie"></div>
+                                <label for="pie-chart-for-project-progress">PROGRESS</label>
+                        </div>
+                    </div>
+                    <div class="vGraph" >
+                        <div class="graphInfo" id="progress_graph_info">
+                                <ul>
+                                    <li>
+                                        <label for="total">Total Projects -</label>
+                                        <br>
+                                        <value>25</value>
+                                    </li>
+                                    <li>Project Going in well Timeline</li>
+                                    <li>Project Has No Conflicts</li>
+                                </ul>
+                        </div>
+                        <div class="pie">
+                                <div id="progress-pie"></div>
+                                <label for="pie-chart-for-project-progress">PROGRESS</label>
+                        </div>
+                    </div>
+                </div>`; 
+            });
+
+            //members
+            data.project_summary.forEach((element, index) => {
+                team.innerHTML +=  `<div style="width: 33%; display: flex; flex-wrap: wrap;">
+                    <img src="./images/logo.jpeg" alt="profile" style="width: 30px; height: 30px;">
+                    <div>
+                        <Label class="name-label">Rushikesh Phalle</Label>
+                        <br>
+                        <Label class="role-label">Developer</Label>
+                    </div>
+                    <br>
+                    <div class="current-task" style="width: 100%;">
+                        <span>Developing Dashboard</span>
+                        <span>On Perfect Timeline</span>
+                    </div>
+                    <br>
+                    <button class="assign" style="width: 100%;">Assign Task</button><br>
+
+                    <button class="contact" style="width: 100%;">Contact</button>
+                </div>`;
+            });
+
+
+        } catch (error) {
+            console.error('There was a problem with the fetch operation:', error);
+        }
+    };
+</script>
+
+</html>
+
+
+
+

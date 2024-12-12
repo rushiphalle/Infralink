@@ -15,14 +15,14 @@ const con = mysql.createConnection({
 
 
 export default async function getConflictManagementPage(self_deptarment_name, project_type, required_parameters){
-    globalVariable = {};
-    selfProject = {};
-    page1ConflictingInfo = {isConflicting : false};
+    var globalVariable = {};
+    var selfProject = {};
+    var page1ConflictingInfo = {isConflicting : false};
     if(project_type ==1){
         //its tendered project
-        project_info = await executeQuery(`select * from projects where id = '${required_parameters.id}'`);
+        var project_info = await executeQuery(`select * from projects where id = '${required_parameters.id}'`);
         if(project_info){
-            task_info = await executeQuery(`select * from projectList where id = '${project_info[0].prjId}'`);
+            var task_info = await executeQuery(`select * from projectList where id = '${project_info[0].prjId}'`);
             selfProject.id = project_info[0].id;
             selfProject.department_name = project_info[0].dept;
             selfProject.project_id = project_info[0].prjId;
@@ -33,7 +33,7 @@ export default async function getConflictManagementPage(self_deptarment_name, pr
         }
         conflicting_project_info = await executeQuery(`select * from projects where conflict_id = '${selfProject.id}'`);
         if(conflicting_project_info){
-            task_info = await executeQuery(`select * from projectList where id = '${conflicting_project_info[0].prjId}'`);
+            var task_info = await executeQuery(`select * from projectList where id = '${conflicting_project_info[0].prjId}'`);
             page1ConflictingInfo.isConflicting = true;
             page1ConflictingInfo.project = {};
             page1ConflictingInfo.project.id = conflicting_project_info[0].id;
@@ -46,7 +46,8 @@ export default async function getConflictManagementPage(self_deptarment_name, pr
         }
     }else{
         
-        project_info = await executeQuery(`select * from projects left join projectList on projects.prjId = projectList.id where priority > (select priority from projectList where prjName = '${required_parameters.prjName}') and stage = '3'`);
+        var project_info = await executeQuery(`select * from projects left join projectList on projects.prjId = projectList.id where priority > (select priority from projectList where prjName = '${required_parameters.prjName}') and stage = '3'`);
+        console.log("here1 = " + project_info[0].dept);
         // for(project in project_info){
             project_info.forEach((project, index)=>{
             if(isConflicting(project.co_ordinates, required_parameters.co_ordinates)){
@@ -64,6 +65,7 @@ export default async function getConflictManagementPage(self_deptarment_name, pr
         // }
         selfProject.id = (await executeQuery(`select max(id) as id from projects`))[0].id + 1;
         selfProject.department_name = required_parameters.department_name;
+        // console.log(required_parameters.prjName);
         selfProject.project_id = (await executeQuery(`select id from projectList where prjName = '${required_parameters.prjName}'`))[0].id;
         selfProject.co_ordinates = required_parameters.co_ordinates;
         selfProject.start_date = required_parameters.start_date;
@@ -76,14 +78,15 @@ export default async function getConflictManagementPage(self_deptarment_name, pr
 
     if(page1ConflictingInfo.isConflicting){
         //SELECT DISTINCT(subtaskName), priority FROM task_subtask LEFT JOIN constructionsubtasks ON task_subtask.subtaskId = constructionsubtasks.subtaskId WHERE task_subtask.prjId IN (1, 2) ORDER BY priority ASC;
-        results = await executeQuery(`SELECT DISTINCT(subtaskName), priority FROM task_subtask LEFT JOIN constructionsubtasks ON task_subtask.subtaskId = constructionsubtasks.subtaskId WHERE task_subtask.prjId IN (${selfProject.id}, ${page1ConflictingInfo.project.id}) ORDER BY priority ASC`);
-        phases = [];
+        var results = await executeQuery(`SELECT DISTINCT(subtaskName), priority FROM task_subtask LEFT JOIN constructionsubtasks ON task_subtask.subtaskId = constructionsubtasks.subtaskId WHERE task_subtask.prjId IN (${selfProject.id}, ${page1ConflictingInfo.project.id}) ORDER BY priority ASC`);
+        var phases = [];
         // for(result in results){
             results.forEach((result, index)=>{
                 phases.push(result.subtaskName);
             });
+            console.log("res= " + results);
         // }
-        conflictingArea = isConflicting(selfProject.co_ordinates, page1ConflictingInfo.project.co_ordinates);
+        var conflictingArea = isConflicting(selfProject.co_ordinates, page1ConflictingInfo.project.co_ordinates);
         globalVariable.myData = selfProject;
         globalVariable.conflictingDataPage1 = page1ConflictingInfo.project;
         globalVariable.phases = phases;
@@ -92,8 +95,8 @@ export default async function getConflictManagementPage(self_deptarment_name, pr
     }
 
     //time to check for tendered projects
-    page2ConflictingInfo = {isConflicting : false};
-    project_info = await executeQuery(`select * from projects left join projectList on projects.prjId = projectList.id where priority > (select priority from projectList where prjName = '${required_parameters.prjName}') and stage = '2'`);
+    var page2ConflictingInfo = {isConflicting : false};
+    var project_info = await executeQuery(`select * from projects left join projectList on projects.prjId = projectList.id where priority > (select priority from projectList where prjName = '${required_parameters.prjName}') and stage = '2'`);
     // for(project in project_info){
         project_info.forEach((project, index)=>{
             if(isConflicting(project.co_ordinates, required_parameters.co_ordinates)){
@@ -113,49 +116,51 @@ export default async function getConflictManagementPage(self_deptarment_name, pr
     if(page2ConflictingInfo.isConflicting){
         //SELECT DISTINCT(subtaskName), priority FROM task_subtask LEFT JOIN constructionsubtasks ON task_subtask.subtaskId = constructionsubtasks.subtaskId WHERE task_subtask.prjId IN (1, 2) ORDER BY priority ASC;
         executeQuery(`UPDATE projects SET conflict_id = '${selfProject.id}' where id = '${page2ConflictingInfo.project.id}'`);
-        conflictingArea = isConflicting(selfProject.co_ordinates, page2ConflictingInfo.project.co_ordinates);
+        var conflictingArea = isConflicting(selfProject.co_ordinates, page2ConflictingInfo.project.co_ordinates);
         globalVariable.myData = selfProject;
         globalVariable.conflictingDataPage2 = page2ConflictingInfo.project;
         globalVariable.conflictingArea2 = conflictingArea;
         globalVariable.conflictingPortion2 = findArea(conflictingArea);
         globalVariable.conflictingPeriod = findConflictingDate(selfProject.start_date, selfProject.end_date, page2ConflictingInfo.project.start_date, page2ConflictingInfo.project.end_date); //
-        console.log("date1= " + selfProject.start_date + "Date2= "+ selfProject.end_date + "Date3 = "+  page2ConflictingInfo.project.start_date + "Date4"+ page2ConflictingInfo.project.end_date + "Conflicting: " +  globalVariable.conflictingPeriod);
+        // console.log("date1= " + selfProject.start_date + "Date2= "+ selfProject.end_date + "Date3 = "+  page2ConflictingInfo.project.start_date + "Date4"+ page2ConflictingInfo.project.end_date + "Conflicting: " +  globalVariable.conflictingPeriod);
         globalVariable.map2 = [selfProject.co_ordinates, JSON.parse(page2ConflictingInfo.project.co_ordinates), globalVariable.conflictingArea2];            //mark for review
     }
 
     //time to check for predicted conflicts
-    mlData = await executeQuery(`select * from features`);
-    dataToSendForPrediction = [];
+    var mlData = await executeQuery(`select * from features`);
+    var dataToSendForPrediction = [];
     // for(singleData in mlData){
         mlData.forEach((singleData, index)=>{
-            conflictArea = isConflicting(required_parameters.co_ordinates, singleData.co_ordinates);
+            const conflictArea = isConflicting(required_parameters.co_ordinates, singleData.coordinates);
             if(conflictArea){
                 dataToSendForPrediction.push({checkFor : "electricity", data : singleData});
             }
         });
+        // console.log(dataToSendForPrediction);
     // }
-    prediction = await predict(dataToSendForPrediction);
-    predictionData = [];
+    var prediction = await predict(dataToSendForPrediction);
+    var predictionData = [];
     if(prediction){
         // for(p in prediction){
-            prediction.forEach((p, index)=>{
-                predictionData.push({department_name: "Electricity", conflicting_area : isConflicting(p.    coordinates, selfProject.co_ordinates), probability : p.probability});
-            })
+            // prediction.forEach((p, index)=>{
+            //     predictionData.push({department_name: "Electricity", conflicting_area : isConflicting(p.    coordinates, selfProject.co_ordinates), probability : p.probability});
+            // })
+
             // }
         }
         
         
         //time to work on divs
-        dynamicPhases = ``;
-        globalVariable.phases.forEach((phase, index)=>{
-            dynamicPhases += `<label style="grid-column: 1/4; font-size: 14px; font-weight: bold; color: #333;">${[phase]}</label>
-        <input id="startDate${index+1}" type="date" style="padding: 8px; border: 1px solid #ddd; border-radius: 5px; font-size: 14px; width: 90%;">
-        <input id="endDate${index+1}" type="date" style="padding: 8px; border: 1px solid #ddd; border-radius: 5px; font-size: 14px; width: 90%;">`
-        });
-        div1 = ``;
-        div2 = ``;
-    if(page1ConflictingInfo.isConflicting){
-        div1 = `
+        var div1 = ``;
+        var div2 = ``;
+        if(page1ConflictingInfo.isConflicting){
+            var dynamicPhases = ``;
+            globalVariable.phases.forEach((phase, index)=>{
+                dynamicPhases += `<label style="grid-column: 1/4; font-size: 14px; font-weight: bold; color: #333;">${[phase]}</label>
+            <input id="startDate${index+1}" type="date" style="padding: 8px; border: 1px solid #ddd; border-radius: 5px; font-size: 14px; width: 90%;">
+            <input id="endDate${index+1}" type="date" style="padding: 8px; border: 1px solid #ddd; border-radius: 5px; font-size: 14px; width: 90%;">`
+            });
+            div1 = `
         <div id="part1" style="max-width: 100vw; height: calc(100vh - 20px);  display: flex; margin-top: 20px;">
             <section id="text" style=" padding: 50px;">
                 <h2 style="color: white; padding: 15px 40px; background-image: linear-gradient(to right, rgb(134, 134, 192), rgb(0, 119, 255)); border-radius: 25px;  width: calc(100% - 60px); text-align: center; box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);">
@@ -233,7 +238,7 @@ export default async function getConflictManagementPage(self_deptarment_name, pr
         </div>
         `;
     }
-    div3 = ``;
+    var div3 = ``;
     if(page2ConflictingInfo.isConflicting){
         div3 = `<div id="part3" style="max-width: 100vw; height: calc(100vh - 20px);  display: flex; margin-top: 20px;">
                 <section style="width: 100%; padding: 50px;">
@@ -281,7 +286,7 @@ export default async function getConflictManagementPage(self_deptarment_name, pr
                             </div>
                             <button onclick="setTenderedPatch()"><a href="#part4">Submit</a></button>
                         </div>
-
+                        
                         <div id="status" style="
                             width: 90%; 
                             display: flex; 
@@ -326,7 +331,7 @@ export default async function getConflictManagementPage(self_deptarment_name, pr
                 </section>
             </div>`;
     }
-    div4 = `
+    var div4 = `
         <div id="part4" style="max-width: 100vw; height: calc(100vh - 20px);  display: flex; margin-top: 20px;">
         <section style="width: 100%; padding: 50px;">
             <h2
@@ -345,17 +350,17 @@ export default async function getConflictManagementPage(self_deptarment_name, pr
     
                         <div style="display: flex; justify-content: space-between; align-items: center;">
                             <label style="font-weight: bold;">Department:</label>
-                            <span style="font-size: 16px; color: rgb(50, 50, 50);">MOHOU</span>
+                            <span style="font-size: 16px; color: rgb(50, 50, 50);">Ministry of Petroleum And Natural Gas</span>
                         </div>
     
                         <div style="display: flex; justify-content: space-between; align-items: center;">
                             <label style="font-weight: bold;">Name:</label>
-                            <span style="font-size: 16px; color: rgb(50, 50, 50);">Road Construction Project</span>
+                            <span style="font-size: 16px; color: rgb(50, 50, 50);">Gas Pipeline</span>
                         </div>
     
                         <div style="display: flex; justify-content: space-between; align-items: center;">
                             <label style="font-weight: bold;">Probability in Upcoming One Year:</label>
-                            <span style="font-size: 16px; font-weight: bold; color: green;">97%</span>
+                            <span style="font-size: 16px; font-weight: bold; color: green;">73.2%</span>
                         </div>
     
                         <label style="color: rgb(120, 120, 120); font-style: italic; text-align: center; margin-top: 10px;">
@@ -387,7 +392,7 @@ export default async function getConflictManagementPage(self_deptarment_name, pr
     </div>
     `;
 
-    head = `
+    var head = `
         <head>
             <meta charset="UTF-8">
             <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -396,14 +401,14 @@ export default async function getConflictManagementPage(self_deptarment_name, pr
             async defer></script> 
         </head>
     `;
-    globalScript = `
+    var globalScript = `
         <script>
             variables = ${JSON.stringify(globalVariable)};
             dataToSendBack = {};
         </script>
     `;
-    body = div1 + div2 + div3 + div4;
-    endingScripts = `
+    var body = div1 + div2 + div3 + div4;
+    var endingScripts = `
         <script id="saving">
             function sendMessage(endpoint, data){
             }
@@ -464,12 +469,14 @@ export default async function getConflictManagementPage(self_deptarment_name, pr
         
             function initMap() {
             // Define center coordinates for all maps
-            const centerMap1 = { lat: 37.7749, lng: -122.4194 }; // San Francisco
-            const centerMap2 = { lat: 34.0522, lng: -118.2437 }; // Los Angeles
-            const centerMap3 = { lat: 34.0522, lng: -118.2437 }; // Los Angeles
+            
+            
+           
 
             // Initialize maps
+            console.log(variables.map1);
             if(document.getElementById("map1")){
+            const centerMap1 = { lat: variables.map1[0][0][0], lng: variables.map1[0][0][1] }; // San Francisco
                 map1 = new google.maps.Map(document.getElementById("map1"), {
                     zoom: 10,
                     center: centerMap1,
@@ -477,6 +484,7 @@ export default async function getConflictManagementPage(self_deptarment_name, pr
                 drawPolygons(map1, variables.map1);
             }
             if(document.getElementById("map2")){
+            const centerMap2 = { lat: variables.map2[0][0][0], lng: variables.map2[0][0][1] }; // Los Angeles
                 map2 = new google.maps.Map(document.getElementById("map2"), {
                     zoom: 10,
                     center: centerMap2,
@@ -486,6 +494,7 @@ export default async function getConflictManagementPage(self_deptarment_name, pr
             }
 
             if(document.getElementById("map3")){
+             const centerMap3 = { lat: variables.map3[0][0][0], lng: variables.map3[0][0][1] }; // Los Angeles
                 map3 = new google.maps.Map(document.getElementById("map3"), {
                     zoom: 10,
                     center: centerMap3,
@@ -497,8 +506,9 @@ export default async function getConflictManagementPage(self_deptarment_name, pr
             
             
         }
-
         function drawPolygons(map, mapData) {
+            color = ['green', 'red', 'blue'];
+            index = 0;
             mapData.forEach(polygonCoords => {
                 // Convert [lat, lng] to {lat, lng}
                 const paths = polygonCoords.map(([lat, lng]) => ({ lat, lng }));
@@ -506,7 +516,7 @@ export default async function getConflictManagementPage(self_deptarment_name, pr
                 // Draw the polygon
                 const polygon = new google.maps.Polygon({
                     paths,
-                    strokeColor: '#FF0000',
+                    strokeColor: color[index++],
                     strokeOpacity: 0.8,
                     strokeWeight: 2,
                     fillColor: '#FF0000',
@@ -538,15 +548,15 @@ async function executeQuery(query) {
 function isConflicting(cords1, cords2){
     if(typeof(cords1) == "string"){
         cords1 = JSON.parse(cords1);
-        console.log(cords1);
+        // console.log(cords1);
     }
     if(typeof(cords2) == "string"){
         cords2 = JSON.parse(cords2);
-        console.log(cords2);
+        // console.log(cords2);
     }
     if(cords1 === cords2)   return cords1;
-    poly1 = turf.polygon([cords1]);
-    poly2 = turf.polygon([cords2]);
+    var poly1 = turf.polygon([cords1]);
+    var poly2 = turf.polygon([cords2]);
     var intersection = turf.intersect(turf.featureCollection([poly1, poly2]));
     if(intersection){
         return intersection.geometry.coordinates[0];
@@ -558,7 +568,7 @@ function findArea(cords){
     if(typeof(cords)=="string"){
         JSON.parse("string");
     }
-    console.log(cords);
+    // console.log(cords);
     return turf.area(turf.polygon([cords]));
 
 }
@@ -596,15 +606,18 @@ function findConflictingDate(startDate1, endDate1, startDate2, endDate2) {
     };
 }
 
-async function predict(){
+async function predict(data){
+    console.log("Data");
     var stream = [];
-    const data = await executeQuery("select * from features");
+    return stream;
     data.forEach((d)=>{
         if(isConflicting(d.co_ordinates, selfProject.co_ordinates)){
             stream.push({searchFor: "Electricity", cords: isConflicting(d.co_ordinates, selfProject.co_ordinates), features : data});
         }
     });
-    return await fetch('https://example.com/endpoint', {
+
+    console.log(data);
+    return await fetch('http://192.168.238.1:5000/predict_batch', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
